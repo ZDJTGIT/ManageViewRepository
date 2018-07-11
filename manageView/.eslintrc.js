@@ -46,6 +46,7 @@ module.exports = {
     'no-bitwise': [0],
     'no-cond-assign': [0],
     'import/no-unresolved': [0],
+    'linebreak-style': ['error', 'windows'],
     'comma-dangle': [
       'error',
       {

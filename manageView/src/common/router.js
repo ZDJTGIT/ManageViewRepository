@@ -158,6 +158,15 @@ export const getRouterData = app => {
         import('../routes/Exception/triggerException')
       ),
     },
+    '/monitor/project': {
+      component: dynamicWrapper(app, ['monitor'], () => import('../routes/Monitor/Project')),
+    },
+    '/monitor/user': {
+      component: dynamicWrapper(app, ['monitor'], () => import('../routes/Monitor/User')),
+    },
+    '/monitor/pro-use': {
+      component: dynamicWrapper(app, ['monitor'], () => import('../routes/Monitor/ProUse')),
+    },
     '/user': {
       component: dynamicWrapper(app, [], () => import('../layouts/UserLayout')),
     },

@@ -135,6 +135,25 @@ const menuData = [
     ],
   },
   {
+    name: '自动监测',
+    icon: 'area-chart',
+    path: 'monitor',
+    children: [
+      {
+        name: '项目模块',
+        path: 'project',
+      },
+      {
+        name: '用户模块',
+        path: 'user',
+      },
+      {
+        name: '项目用户关系模块',
+        path: 'pro-use',
+      },
+    ],
+  },
+  {
     name: '账户',
     icon: 'user',
     path: 'user',
