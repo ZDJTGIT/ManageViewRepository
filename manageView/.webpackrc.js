@@ -4,9 +4,11 @@ export default {
   entry: 'src/index.js',
   extraBabelPlugins: [['import', { libraryName: 'antd', libraryDirectory: 'es', style: true }]],
   env: {
+    // 开发环境
     development: {
       extraBabelPlugins: ['dva-hmr'],
     },
+    //  build 时的生产环境
   },
   externals: {
     '@antv/data-set': 'DataSet',
