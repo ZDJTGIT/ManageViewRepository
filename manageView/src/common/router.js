@@ -164,8 +164,8 @@ export const getRouterData = app => {
     '/monitor/user': {
       component: dynamicWrapper(app, ['monitor'], () => import('../routes/Monitor/User')),
     },
-    '/monitor/pro-use': {
-      component: dynamicWrapper(app, ['monitor'], () => import('../routes/Monitor/ProUse')),
+    '/monitor/pro-user': {
+      component: dynamicWrapper(app, ['monitor'], () => import('../routes/Monitor/ProUser')),
     },
     '/mydata/moni-data': {
       component: dynamicWrapper(app, [], () => import('../routes/QueryData/MoniData')),

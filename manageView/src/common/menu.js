@@ -149,7 +149,7 @@ const menuData = [
       },
       {
         name: '项目用户关系模块',
-        path: 'pro-use',
+        path: 'pro-user',
       },
     ],
   },
