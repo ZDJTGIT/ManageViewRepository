@@ -140,16 +140,38 @@ const menuData = [
     path: 'monitor',
     children: [
       {
-        name: '项目模块',
+        name: '项目管理',
         path: 'project',
       },
       {
-        name: '用户模块',
+        name: '用户管理',
         path: 'user',
       },
       {
         name: '项目用户关系模块',
         path: 'pro-use',
+      },
+    ],
+  },
+  {
+    name: '数据查询',
+    icon: 'hdd',
+    path: 'mydata',
+    children: [
+      {
+        name: '自动监测数据查询',
+        path: 'moni-data',
+      },
+    ],
+  },
+  {
+    name: '数据修改',
+    icon: 'form',
+    path: 'updata',
+    children: [
+      {
+        name: '修改第一次数据',
+        path: 'upfirst-data',
       },
     ],
   },

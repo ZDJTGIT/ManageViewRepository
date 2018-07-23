@@ -170,7 +170,6 @@ export default class TableList extends PureComponent {
       this.setState({
         formValues: values,
       });
-
       dispatch({
         type: 'rule/fetch',
         payload: values,

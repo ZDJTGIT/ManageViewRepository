@@ -5,6 +5,33 @@ export function fixedZero(val) {
   return val * 1 < 10 ? `0${val}` : val;
 }
 
+export function getNowFormatDate(time) {
+  const date = new Date(time);
+  const year = date.getFullYear();
+  let month = date.getMonth() + 1;
+  let strDate = date.getDate();
+  const hours = date.getHours();
+  let minute = date.getMinutes().toString();
+  let seconds = date.getSeconds();
+  if (month >= 1 && month <= 9) {
+    month = `0${month}`;
+  }
+  if (strDate >= 0 && strDate <= 9) {
+    strDate = `0${strDate}`;
+  }
+  if (minute.length === 1) {
+    minute = '00';
+  } else {
+    minute = `${minute.substring(0, 1)}0`;
+  }
+  if (seconds >= 0 && seconds <= 9) {
+    seconds = `0${seconds}`;
+  }
+  // const currentdate = year + '-' + month + '-' + strDate + ' ' + hours + ':' + minute + ':' + seconds;
+  const currentdate = `${year}-${month}-${strDate} ${hours}:${minute}:${seconds}`;
+  return currentdate;
+}
+
 export function getTimeDistance(type) {
   const now = new Date();
   const oneDay = 1000 * 60 * 60 * 24;
