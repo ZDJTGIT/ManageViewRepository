@@ -63,7 +63,7 @@ export default class AddProjectForm extends Component {
         value.projectBeginTime = projectBeginTime;
         value.projectEndTime = projectEndTime;
         axios
-          .post('http://10.88.89.148:8080/managerProject/insertProject', value, {
+          .post('http://123.207.39.209:8090/managerProject/insertProject', value, {
             headers: { 'Content-Type': 'application/json;charset=UTF-8' },
           })
           .then(() => {

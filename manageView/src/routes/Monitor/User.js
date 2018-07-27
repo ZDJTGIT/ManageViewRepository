@@ -23,7 +23,7 @@ export default class User extends Component {
 
   componentWillMount() {
     axios
-      .get('http://10.88.89.148:8080/managerUser/queryAllUser')
+      .get('http://123.207.39.209:8090/managerUser/queryAllUser')
       .then(result => {
         this.setState({ users: result.data.data });
         this.setState({ showAddButton: 6 });

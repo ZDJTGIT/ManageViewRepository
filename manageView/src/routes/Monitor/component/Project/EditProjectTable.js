@@ -137,7 +137,7 @@ export default class EditableTable extends Component {
                     onOk: () => {
                       axios
                         .delete(
-                          `http://10.88.89.148:8080/managerProject/deleteProjectByProjectId?projectId=${
+                          `http://123.207.39.209:8090/managerProject/deleteProjectByProjectId?projectId=${
                             record.projectId
                           }`
                         )
@@ -189,7 +189,7 @@ export default class EditableTable extends Component {
         obj.projectId = projectId;
         console.log(obj);
         axios
-          .post('http://10.88.89.148:8080/managerProject/modifyProject', obj, {
+          .post('http://123.207.39.209:8090/managerProject/modifyProject', obj, {
             headers: { 'Content-Type': 'application/json;charset=UTF-8' },
           })
           .then(() => {
@@ -206,7 +206,7 @@ export default class EditableTable extends Component {
 
   showSensorModal(record) {
     axios
-      .get('http://10.88.89.148:8080/managerProject/getSensorData', {
+      .get('http://123.207.39.209:8090/managerProject/getSensorData', {
         params: { projectId: record.projectId },
       })
       .then(result => {
@@ -222,7 +222,7 @@ export default class EditableTable extends Component {
   showSensorModal1() {
     const { currentProjectId } = this.state;
     axios
-      .get('http://10.88.89.148:8080/managerProject/getSensorData', {
+      .get('http://123.207.39.209:8090/managerProject/getSensorData', {
         params: { projectId: currentProjectId },
       })
       .then(result => {

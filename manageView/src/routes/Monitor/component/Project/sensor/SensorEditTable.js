@@ -105,7 +105,7 @@ export default class SensorEditableTable extends Component {
                     onOk: () => {
                       axios
                         .delete(
-                          `http://10.88.89.148:8080/managerProject/deleteSensorBySonsor?sensorId=${
+                          `http://123.207.39.209:8090/managerProject/deleteSensorBySonsor?sensorId=${
                             record.sensorId
                           }`
                         )
@@ -165,7 +165,7 @@ export default class SensorEditableTable extends Component {
         console.log(row);
         axios
           .post(
-            `http://10.88.89.148:8080/managerProject/modifySensor?monitorTypeValue=${monitorTypeValue}`,
+            `http://123.207.39.209:8090/managerProject/modifySensor?monitorTypeValue=${monitorTypeValue}`,
             obj,
             {
               headers: { 'Content-Type': 'application/json;charset=UTF-8' },

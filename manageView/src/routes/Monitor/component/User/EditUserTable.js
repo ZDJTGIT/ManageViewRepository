@@ -102,7 +102,7 @@ export default class EditableTable extends Component {
                     onOk: () => {
                       axios
                         .delete(
-                          `http://10.88.89.148:8080/managerUser/deleteUserByUserId?userId=${
+                          `http://123.207.39.209:8090/managerUser/deleteUserByUserId?userId=${
                             record.userId
                           }`
                         )
@@ -154,7 +154,7 @@ export default class EditableTable extends Component {
         obj.password = item.password;
         obj.userName = item.userName;
         axios
-          .post('http://10.88.89.148:8080/managerUser/modifyUser', obj, {
+          .post('http://123.207.39.209:8090/managerUser/modifyUser', obj, {
             headers: { 'Content-Type': 'application/json;charset=UTF-8' },
           })
           .then(() => {

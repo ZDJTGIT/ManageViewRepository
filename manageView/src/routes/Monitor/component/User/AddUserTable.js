@@ -31,7 +31,7 @@ export default class AddUserForm extends Component {
       if (!err) {
         delete value.confirmPassword;
         axios
-          .post('http://10.88.89.148:8080/managerUser/insertUser', value, {
+          .post('http://123.207.39.209:8090/managerUser/insertUser', value, {
             headers: { 'Content-Type': 'application/json;charset=UTF-8' },
           })
           .then(() => {

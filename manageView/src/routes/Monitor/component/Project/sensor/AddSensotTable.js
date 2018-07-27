@@ -16,7 +16,7 @@ export default class AddSensorTable extends Component {
 
   componentWillMount() {
     axios
-      .get('http://10.88.89.148:8080/managerProject/getAddSensorData')
+      .get('http://123.207.39.209:8090/managerProject/getAddSensorData')
       .then(result => {
         const data1 = result.data.data;
         const temp = [];
@@ -45,7 +45,7 @@ export default class AddSensorTable extends Component {
       value.projectId = projectId;
       if (!err) {
         axios
-          .post('http://10.88.89.148:8080/managerProject/insertSensor', value, {
+          .post('http://123.207.39.209:8090/managerProject/insertSensor', value, {
             headers: { 'Content-Type': 'application/json;charset=UTF-8' },
           })
           .then(() => {

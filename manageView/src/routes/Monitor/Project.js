@@ -23,7 +23,7 @@ export default class Project extends Component {
 
   componentWillMount() {
     axios
-      .get('http://10.88.89.148:8080/managerProject/queryAllProject')
+      .get('http://123.207.39.209:8090/managerProject/queryAllProject')
       .then(result => {
         this.setState({ projects: result.data.data });
         this.setState({ showAddButton: 6 });
