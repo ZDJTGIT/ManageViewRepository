@@ -33,7 +33,7 @@ export default class ProUser extends Component {
 
   componentWillMount() {
     axios
-      .get('http://10.88.89.148/manager/userAndPro')
+      .get('http://123.207.39.209:8090/manager/userAndPro')
       .then(result => {
         const { projectHasUser } = result.data.data;
         const { userHasProject } = result.data.data;
@@ -71,7 +71,7 @@ export default class ProUser extends Component {
   handleChange(value) {
     const json = JSON.stringify({ userName: value });
     axios
-      .post('http://10.88.89.148/manager/queryProjectByUserName', json, {
+      .post('http://123.207.39.209:8090/manager/queryProjectByUserName', json, {
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
       })
       .then(result => {
@@ -94,7 +94,7 @@ export default class ProUser extends Component {
         message.error('获取用户列表失败');
       });
     axios
-      .post('http://10.88.89.148/manager/queryNoProjectByUserName', json, {
+      .post('http://123.207.39.209:8090/manager/queryNoProjectByUserName', json, {
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
       })
       .then(result => {
@@ -138,7 +138,7 @@ export default class ProUser extends Component {
       }
       const json = JSON.stringify(temp);
       axios
-        .post('http://10.88.89.148/manager/addProjectsToUsert', json, {
+        .post('http://123.207.39.209:8090/manager/addProjectsToUsert', json, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         })
         .then(() => {
@@ -207,7 +207,7 @@ export default class ProUser extends Component {
                   onOk: () => {
                     axios
                       .delete(
-                        `http://10.88.89.148/manager/deleteProjectForUser?userName=${currentUser}&projectName=${
+                        `http://123.207.39.209:8090/manager/deleteProjectForUser?userName=${currentUser}&projectName=${
                           record.projectName
                         }`
                       )
