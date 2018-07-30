@@ -22,7 +22,7 @@ export default class AddProjectForm extends Component {
 
   componentWillMount() {
     axios
-      .get('http://localhost:8080/managerProject/getCreateProjectData')
+      .get('http://123.207.39.209:8090/managerProject/getCreateProjectData')
       .then(result => {
         const getStatus = result.data.data.projectStatusData;
         const statetemp = [];
