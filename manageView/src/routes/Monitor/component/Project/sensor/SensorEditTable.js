@@ -162,7 +162,6 @@ export default class SensorEditableTable extends Component {
         obj.sensorDepth = item.sensorDepth;
         const monitorTypeValue = obj.monitorType;
         obj.monitorType = '';
-        console.log(row);
         axios
           .post(
             `http://123.207.39.209:8090/managerProject/modifySensor?monitorTypeValue=${monitorTypeValue}`,

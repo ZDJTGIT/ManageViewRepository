@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { Row, Col, Card, Tabs, Table, message, Badge, Button, Icon, Select, Modal } from 'antd';
-import { Pie } from 'components/Charts';
 import axios from 'axios';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './ProUser.less';
@@ -13,53 +12,55 @@ export default class ProUser extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      proHasUsers: [], // 饼状图统计项目客户数
-      userHasPros: [], // 饼状图统计用户下项目数
-      userNameOption: [], // 选择栏数据
+      userNameOption: [], // 选择用户栏数据
+      projectOption: [], // 选择项目名栏数据
       selectedUserHasPros: [], // 选中的用户拥有的项目
-      showAddButton: 0, // 是否显示拓展栏
+      selectedProjectHasUsers: [], // 选中的项目下用户
+      showAddButton: 0, // 是否显示用户处拓展栏
+      showAddUserButton: 0, // 是否显示项目处添加用户拓展栏
       currentUser: '', // 当前选中用户
+      currentProject: '', // 当前选中项目
       showAddProModal: false, // 是否显示添加项目对话框
+      showAddUserModal: false, // 是否显示添加用户对话框
       selectedProjects: [], // 添加项目选中的项目
+      selectedUsers: [], // 添加用户选中的用户
       selectedUserHasNoPros: [], // 选中用户未拥有的项目
-      selectedRowKeys1: [], // 选中的行的key
+      selectedProjectHasNoUsers: [], // 选中的项目未拥有的用户
+      selectedRowKeys1: [], // 选中的项目行的key
+      selectedRowKeys2: [], // 选中的用户行的key
     };
     this.setState = this.setState.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.projectHandleChange = this.projectHandleChange.bind(this);
     this.addProject = this.addProject.bind(this);
+    this.addUser = this.addUser.bind(this);
     this.addOk = this.addOk.bind(this);
     this.addCancel = this.addCancel.bind(this);
+    this.addUserOk = this.addUserOk.bind(this);
+    this.addUserCancel = this.addUserCancel.bind(this);
   }
 
   componentWillMount() {
     axios
       .get('http://123.207.39.209:8090/manager/userAndPro')
       .then(result => {
-        const { projectHasUser } = result.data.data;
-        const { userHasProject } = result.data.data;
-        const { userNameList } = result.data.data;
-        const projectHasUserTemp = [];
-        const userHasProsTemp = [];
-        const userNameListTemp = [];
-        for (const key in projectHasUser) {
-          if (key != null) projectHasUserTemp.push({ x: key, y: projectHasUser[key] });
-        }
-        for (const key in userHasProject) {
+        const userList1 = result.data.data.userList;
+        const projectList1 = result.data.data.projectList;
+        const userTemp = [];
+        const projectTemp = [];
+        for (const key in userList1) {
           if (key != null) {
-            userHasProsTemp.push({ x: key, y: userHasProject[key] });
+            userTemp.push({ x: userList1[key].userId, y: userList1[key].userName });
           }
         }
-        for (let i = 0; i < userNameList.length; i += 1) {
-          userNameListTemp.push(
-            <Option key={i.toString(userNameList.length)} value={userNameList[i]}>
-              {userNameList[i]}
-            </Option>
-          );
+        for (const key in projectList1) {
+          if (key != null) {
+            projectTemp.push({ x: projectList1[key].projectId, y: projectList1[key].projectName });
+          }
         }
         this.setState({
-          proHasUsers: projectHasUserTemp,
-          userHasPros: userHasProsTemp,
-          userNameOption: userNameListTemp,
+          userNameOption: userTemp,
+          projectOption: projectTemp,
         });
       })
       .catch(() => {
@@ -69,23 +70,12 @@ export default class ProUser extends Component {
 
   // 下拉开始
   handleChange(value) {
-    const json = JSON.stringify({ userName: value });
     axios
-      .post('http://123.207.39.209:8090/manager/queryProjectByUserName', json, {
-        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-      })
+      .get(`http://123.207.39.209:8090/manager/queryProjectByUserId?userId=${value}`)
       .then(result => {
         const userHasPros = result.data.data;
-        const userHasProsTemp = [];
-        for (let i = 0; i < userHasPros.length; i += 1) {
-          userHasProsTemp.push({
-            key: i,
-            projectName: userHasPros[i].projectName,
-            projectAddress: userHasPros[i].projectAddress,
-          });
-        }
         this.setState({
-          selectedUserHasPros: userHasProsTemp,
+          selectedUserHasPros: userHasPros,
           showAddButton: 6,
           currentUser: value,
         });
@@ -94,23 +84,54 @@ export default class ProUser extends Component {
         message.error('获取用户列表失败');
       });
     axios
-      .post('http://123.207.39.209:8090/manager/queryNoProjectByUserName', json, {
-        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-      })
+      .get(`http://123.207.39.209:8090/manager/queryNoProjectByUserId?userId=${value}`)
       .then(result => {
-        const userNoHasPros = result.data.data;
+        const userNoHasProjects = result.data.data;
         const temp = [];
-        for (let i = 0; i < userNoHasPros.length; i += 1) {
+        for (let i = 0; i < userNoHasProjects.length; i += 1) {
           temp.push({
             key: i,
-            projectName: userNoHasPros[i].projectName,
-            projectAddress: userNoHasPros[i].projectAddress,
+            projectName: userNoHasProjects[i].projectName,
           });
         }
         this.setState({ selectedUserHasNoPros: temp });
       })
       .catch(() => {
-        message.error('获取用户数据异常');
+        message.error('获取用户项目数据异常');
+      });
+  }
+
+  projectHandleChange(value) {
+    axios
+      .get(`http://123.207.39.209:8090/manager/queryUserByProjectId?projectId=${value}`)
+      .then(result => {
+        const projectHasUsers = result.data.data;
+        this.setState({
+          selectedProjectHasUsers: projectHasUsers,
+          showAddUserButton: 6,
+          currentProject: value,
+        });
+      })
+      .catch(() => {
+        message.error('获取项目列表失败');
+      });
+    axios
+      .get(`http://123.207.39.209:8090/manager/queryNoUserByProjectId?projectId=${value}`)
+      .then(result => {
+        const projectNoHasUsers = result.data.data;
+        const temp = [];
+        for (let i = 0; i < projectNoHasUsers.length; i += 1) {
+          temp.push({
+            key: i,
+            userName: projectNoHasUsers[i].userName,
+            company: projectNoHasUsers[i].company,
+            userId: projectNoHasUsers[i].userId,
+          });
+        }
+        this.setState({ selectedProjectHasNoUsers: temp });
+      })
+      .catch(() => {
+        message.error('获取项目用户数据异常');
       });
   }
   // 下拉结束
@@ -120,8 +141,12 @@ export default class ProUser extends Component {
     this.setState({ showAddProModal: true });
   }
 
+  addUser() {
+    this.setState({ showAddUserModal: true });
+  }
+
   addOk() {
-    const { selectedProjects, currentUser } = this.state;
+    const { selectedProjects, currentUser, currentProject } = this.state;
     if (selectedProjects.length < 1) {
       confirm({
         title: '信息确认',
@@ -145,6 +170,7 @@ export default class ProUser extends Component {
           message.success('添加项目成功');
           // 重置数据
           this.handleChange(currentUser);
+          this.projectHandleChange(currentProject);
           this.componentWillMount();
         })
         .catch(() => {
@@ -154,29 +180,72 @@ export default class ProUser extends Component {
     }
   }
 
+  addUserOk() {
+    const { selectedUsers, currentProject, currentUser } = this.state;
+    if (selectedUsers.length < 1) {
+      confirm({
+        title: '信息确认',
+        content: '当前未选择任何用户',
+        okText: '确认',
+        okType: 'danger',
+        cancelText: '取消',
+      });
+    } else {
+      const temp = [];
+      temp.push(currentProject);
+      for (let i = 0; i < selectedUsers.length; i += 1) {
+        temp.push(selectedUsers[i]);
+      }
+      const json = JSON.stringify(temp);
+      axios
+        .post('http://123.207.39.209:8090/manager/addUserToProject', json, {
+          headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        })
+        .then(() => {
+          message.success('添加成功');
+          this.projectHandleChange(currentProject);
+          this.handleChange(currentUser);
+          this.componentWillMount();
+        })
+        .catch(() => {
+          message.error('为项目添加管理用户失败');
+        });
+      this.setState({ showAddUserModal: false, selectedRowKeys2: [], selectedUsers: [] });
+    }
+  }
+
   addCancel() {
     this.setState({ showAddProModal: false, selectedRowKeys1: [], selectedProjects: [] });
+  }
+
+  addUserCancel() {
+    this.setState({ showAddUserModal: false });
   }
 
   // 添加项目结束
   render() {
     const {
       showAddProModal,
+      showAddUserModal,
       showAddButton,
+      showAddUserButton,
       selectedUserHasNoPros,
-      proHasUsers,
-      userHasPros,
+      selectedProjectHasNoUsers,
       userNameOption,
       selectedUserHasPros,
+      selectedProjectHasUsers,
+      projectOption,
       currentUser,
+      currentProject,
       selectedRowKeys1,
+      selectedRowKeys2,
     } = this.state;
     const tabContent = [
       <span>
-        <Icon type="user" />用户项目管理
+        <Icon type="user" />用户管理项目
       </span>,
       <span>
-        <Icon type="pie-chart" />统计饼状图
+        <Icon type="solution" />项目管理人员
       </span>,
     ];
     // 表格内容
@@ -186,11 +255,37 @@ export default class ProUser extends Component {
       {
         title: '项目状态',
         key: 'projectStatus',
-        render: () => (
-          <span>
-            <Badge status="success" />已启动
-          </span>
-        ),
+        render(record) {
+          const notStart = (
+            <span>
+              <Badge status="default" />未启动
+            </span>
+          );
+          const started = (
+            <span>
+              <Badge status="success" />已启动
+            </span>
+          );
+          const stopped = (
+            <span>
+              <Badge status="error" />已暂停
+            </span>
+          );
+          const end = (
+            <span>
+              <Badge status="default" />已结束
+            </span>
+          );
+          if (record.projectStatus === 22) {
+            return notStart;
+          } else if (record.projectStatus === 23) {
+            return started;
+          } else if (record.projectStatus === 24) {
+            return stopped;
+          } else {
+            return end;
+          }
+        },
       },
       {
         title: '操作',
@@ -207,12 +302,71 @@ export default class ProUser extends Component {
                   onOk: () => {
                     axios
                       .delete(
-                        `http://123.207.39.209:8090/manager/deleteProjectForUser?userName=${currentUser}&projectName=${
-                          record.projectName
+                        `http://123.207.39.209:8090/manager/deleteProjectForUser?userId=${currentUser}&projectId=${
+                          record.projectId
                         }`
                       )
                       .then(() => {
                         message.success('移除项目成功');
+                        this.handleChange(currentUser);
+                        this.projectHandleChange(currentProject);
+                        this.componentWillMount();
+                      });
+                  },
+                  okText: '确认',
+                  okType: 'danger',
+                  cancelText: '取消',
+                });
+              }}
+            >
+              移除
+            </a>
+          </span>
+        ),
+      },
+    ];
+    const projectColumns = [
+      { title: '用户名', dataIndex: 'userName', key: 'userId' },
+      { title: '公司', dataIndex: 'company', key: 'company' },
+      {
+        title: '用户状态',
+        key: 'status',
+        render(record) {
+          const ok = (
+            <span>
+              <Badge status="success" />正常
+            </span>
+          );
+          const ice = (
+            <span>
+              <Badge status="default" />冻结
+            </span>
+          );
+          return record.status === '正常' ? ok : ice;
+        },
+      },
+      {
+        title: '操作',
+        dataIndex: 'operation',
+        key: 'operation',
+        render: (text, record) => (
+          <span className="table-operation">
+            <a
+              onClick={() => {
+                confirm({
+                  title: '确认移除该用户对项目的管理权限？',
+                  content: record.userName,
+                  // 移除项目下用户
+                  onOk: () => {
+                    axios
+                      .delete(
+                        `http://123.207.39.209:8090/manager/deleteUserForProject?projectId=${currentProject}&userId=${
+                          record.userId
+                        }`
+                      )
+                      .then(() => {
+                        message.success('移除用户成功');
+                        this.projectHandleChange(currentProject);
                         this.handleChange(currentUser);
                         this.componentWillMount();
                       });
@@ -232,14 +386,31 @@ export default class ProUser extends Component {
     // 添加项目
 
     const addColumns = [{ title: '项目名称', dataIndex: 'projectName', key: 'projectName' }];
+
+    const addUserColumns = [
+      { title: '用户名', dataIndex: 'userName', key: 'userId' },
+      { title: '公司', dataIndex: 'company', key: 'company' },
+    ];
+
     const rowSelection = {
-      selectedRowKeys1,
+      selectedRowKeys: selectedRowKeys1,
       onChange: (selectedRowKeys, selectedRows) => {
         const temp = [];
         for (let i = 0; i < selectedRowKeys.length; i += 1) {
           temp.push(selectedRows[i].projectName);
         }
-        this.setState({ selectedProjects: temp, selectedRowKeys1 });
+        this.setState({ selectedRowKeys1: selectedRowKeys, selectedProjects: temp });
+      },
+    };
+
+    const rowSelectionForPro = {
+      selectedRowKeys: selectedRowKeys2,
+      onChange: (selectedRowKeys, selectedRows) => {
+        const temp = [];
+        for (let i = 0; i < selectedRowKeys.length; i += 1) {
+          temp.push(selectedRows[i].userId);
+        }
+        this.setState({ selectedRowKeys2: selectedRowKeys, selectedUsers: temp });
       },
     };
 
@@ -258,7 +429,13 @@ export default class ProUser extends Component {
                   option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                 }
               >
-                {userNameOption}
+                {userNameOption.map(v => {
+                  return (
+                    <Option key={v.x} value={v.x}>
+                      {v.y}
+                    </Option>
+                  );
+                })}
               </Select>
               <Row>
                 <Col span={showAddButton} style={{ marginTop: '2vh' }}>
@@ -277,44 +454,44 @@ export default class ProUser extends Component {
               />
             </TabPane>
             <TabPane tab={tabContent[1]} key="2">
+              <Select
+                showSearch
+                style={{ width: 400 }}
+                placeholder="请选择一个项目"
+                optionFilterProp="children"
+                onChange={this.projectHandleChange}
+                filterOption={(input, option) =>
+                  option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                }
+              >
+                {projectOption.map(v => {
+                  return (
+                    <Option key={v.x} value={v.x}>
+                      {v.y}
+                    </Option>
+                  );
+                })}
+              </Select>
               <Row>
-                <Pie
-                  hasLegend
-                  subTitle="项目拥有用户数"
-                  data={proHasUsers}
-                  height={294}
-                  total={() => (
-                    <span
-                      dangerouslySetInnerHTML={{
-                        __html: proHasUsers.reduce((pre, now) => now.y + pre, 0),
-                      }}
-                    />
-                  )}
-                />
-
-                <br />
-                <hr />
-                <br />
-
-                <Pie
-                  hasLegend
-                  subTitle="用户下项目数"
-                  data={userHasPros}
-                  height={294}
-                  total={() => (
-                    <span
-                      dangerouslySetInnerHTML={{
-                        __html: userHasPros.reduce((pre, now) => now.y + pre, 0),
-                      }}
-                    />
-                  )}
-                />
+                <Col span={showAddUserButton} style={{ marginTop: '2vh' }}>
+                  <div>
+                    <Button type="primary" icon="plus" onClick={this.addUser}>
+                      添加用户
+                    </Button>
+                  </div>
+                </Col>
               </Row>
+              <Table
+                columns={projectColumns}
+                bordered
+                dataSource={selectedProjectHasUsers}
+                style={{ marginTop: '2vh' }}
+              />
             </TabPane>
           </Tabs>
         </Card>
         <Modal
-          title="添加项目"
+          title="添加已有项目到目前用户"
           visible={showAddProModal}
           onOk={this.addOk}
           onCancel={this.addCancel}
@@ -323,6 +500,18 @@ export default class ProUser extends Component {
             rowSelection={rowSelection}
             columns={addColumns}
             dataSource={selectedUserHasNoPros}
+          />
+        </Modal>
+        <Modal
+          title="为已有项目添加管理用户"
+          visible={showAddUserModal}
+          onOk={this.addUserOk}
+          onCancel={this.addUserCancel}
+        >
+          <Table
+            rowSelection={rowSelectionForPro}
+            columns={addUserColumns}
+            dataSource={selectedProjectHasNoUsers}
           />
         </Modal>
       </PageHeaderLayout>

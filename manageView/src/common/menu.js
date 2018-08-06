@@ -53,6 +53,17 @@ const menuData = [
       },
     ],
   },
+  {
+    name: '手机App',
+    icon: 'android',
+    path: 'app',
+    children: [
+      {
+        name: '图片上传',
+        path: 'upload-picture',
+      },
+    ],
+  },
   // {
   //   name: '账户',
   //   icon: 'user',

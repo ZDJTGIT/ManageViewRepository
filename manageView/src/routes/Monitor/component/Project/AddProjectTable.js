@@ -1,5 +1,17 @@
 import React, { Component } from 'react';
-import { Row, Col, message, Button, Icon, Form, Input, Select, DatePicker } from 'antd';
+import {
+  Row,
+  Col,
+  message,
+  Button,
+  Icon,
+  Form,
+  Input,
+  Select,
+  DatePicker,
+  Modal,
+  Progress,
+} from 'antd';
 import axios from 'axios';
 
 const { RangePicker } = DatePicker;
@@ -10,14 +22,25 @@ export default class AddProjectForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      projectBeginTime: [], // 项目开始时间
-      projectEndTime: [], // 项目结束时间
+      projectBeginTime: '', // 项目开始时间
+      projectEndTime: '', // 项目结束时间
+      projectName: '',
+      projectAddress: '',
+      projectDescription: '',
+      projectLatitude: '',
+      projectLongitude: '',
+      projectStatus1: '',
+      projectType1: '',
+      weatherAddress: '',
       projectStatus: [], // 项目状态下拉
       projectType: [], // 项目类型下拉
+      progressPercent: '0',
+      showProgress: false,
     };
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleReset = this.handleReset.bind(this);
     this.parseTime = this.parseTime.bind(this);
+    this.progressCancel = this.progressCancel.bind(this);
   }
 
   componentWillMount() {
@@ -49,37 +72,68 @@ export default class AddProjectForm extends Component {
   handleReset = () => {
     const { form } = this.props;
     form.resetFields();
+    document.getElementById('subForm').reset();
+    this.setState({ showProgress: false });
+    this.setState({ progressPercent: '0' });
   };
 
   handleSubmit = e => {
+    e.preventDefault();
     const { form } = this.props;
     const { props } = this;
-    const { projectBeginTime, projectEndTime } = this.state;
-    e.preventDefault();
     form.validateFields((err, values) => {
       const value = values;
       if (!err) {
-        delete value.projectTime;
-        value.projectBeginTime = projectBeginTime;
-        value.projectEndTime = projectEndTime;
-        axios
-          .post('http://123.207.39.209:8090/managerProject/insertProject', value, {
-            headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-          })
-          .then(() => {
-            message.success('新增项目成功');
-            setTimeout(() => {
-              props.close();
-              props.refresh();
-              this.handleReset();
-            }, 400);
-          })
-          .catch(() => {
-            message.error('新增项目失败，请再试一次');
-          });
+        this.setState({ showProgress: true });
+        this.setState({
+          projectName: value.projectName,
+          projectAddress: value.projectAddress,
+          projectDescription: value.projectDescription,
+          projectLatitude: value.projectLatitude,
+          projectLongitude: value.projectLongitude,
+          projectStatus1: value.projectStatus,
+          projectType1: value.projectType,
+          weatherAddress: value.weatherAddress,
+        });
+        const formData = new FormData(document.getElementById('subForm'));
+        // delete value.projectTime;
+        // value.projectBeginTime = projectBeginTime;
+        // value.projectEndTime = projectEndTime;
+        // fileList.forEach((file) => {
+        //   data.append('file', file);
+        // });
+        // data.append('project',value);
+        setTimeout(() => {
+          axios
+            .post('http://123.207.39.209:8090/managerProject/insertProject', formData, {
+              headers: {
+                'Content-Type': 'multipart/form-data;charset=UTF-8',
+              },
+              onUploadProgress: progressEvent => {
+                const num = Math.round((progressEvent.loaded / progressEvent.total) * 100);
+                this.setState({ progressPercent: num });
+              },
+            })
+            .then(() => {
+              message.success('新增项目成功');
+              setTimeout(() => {
+                props.close();
+                props.refresh();
+                this.handleReset();
+              }, 400);
+            })
+            .catch(() => {
+              this.setState({ showProgress: false });
+              message.error('新增项目失败，请再试一次');
+            });
+        }, 200);
       }
     });
   };
+
+  progressCancel() {
+    this.setState({ showProgress: false });
+  }
 
   parseTime(value, dateString) {
     this.setState({ projectBeginTime: dateString[0], projectEndTime: dateString[1] });
@@ -92,9 +146,25 @@ export default class AddProjectForm extends Component {
       labelCol: { span: 4 },
       wrapperCol: { span: 18 },
     };
-    const { projectStatus, projectType } = this.state;
+    const {
+      projectStatus,
+      projectType,
+      projectBeginTime,
+      projectEndTime,
+      projectName,
+      projectAddress,
+      projectDescription,
+      projectLatitude,
+      projectLongitude,
+      projectStatus1,
+      projectType1,
+      weatherAddress,
+      progressPercent,
+      showProgress,
+    } = this.state;
+
     return (
-      <Form layout="horizontal" onSubmit={this.handleSubmit}>
+      <Form layout="horizontal" onSubmit={this.handleSubmit} encType="multipart/form-data">
         <FormItem hasFeedback label="项目名称:" {...formItemLayout}>
           {getFieldDecorator('projectName', {
             rules: [{ required: true, message: '请输入项目名称' }],
@@ -202,6 +272,21 @@ export default class AddProjectForm extends Component {
             />
           )}
         </FormItem>
+        <FormItem label="项目图片:" {...formItemLayout}>
+          <form id="subForm">
+            <input type="file" name="点击这里上传文件" accept="image/*" />
+            <input type="hidden" value={projectName} name="projectName" />
+            <input type="hidden" value={projectType1} name="projectType" />
+            <input type="hidden" value={projectAddress} name="projectAddress" />
+            <input type="hidden" value={weatherAddress} name="weatherAddress" />
+            <input type="hidden" value={projectLongitude} name="projectLongitude" />
+            <input type="hidden" value={projectLatitude} name="projectLatitude" />
+            <input type="hidden" value={projectBeginTime} name="projectBeginTime" />
+            <input type="hidden" value={projectEndTime} name="projectEndTime" />
+            <input type="hidden" value={projectStatus1} name="projectStatus" />
+            <input type="hidden" value={projectDescription} name="projectDescription" />
+          </form>
+        </FormItem>
         <hr />
         <FormItem style={{ marginBottom: '0px' }}>
           <Row gutter={1}>
@@ -215,6 +300,22 @@ export default class AddProjectForm extends Component {
             </Col>
           </Row>
         </FormItem>
+        <Modal
+          closable={false}
+          visible={showProgress}
+          footer={null}
+          onCancel={this.progressCancel}
+          maskClosable={false}
+          style={{ marginTop: '30vh' }}
+        >
+          <div style={{ textAlign: 'center' }}>
+            <Progress type="circle" percent={progressPercent} />
+            <br />
+            <div>
+              {progressPercent >= 100 ? '上传完成，等待后台中...请勿刷新' : '正在上传中...请勿刷新'}
+            </div>
+          </div>
+        </Modal>
       </Form>
     );
   }

@@ -187,7 +187,6 @@ export default class EditableTable extends Component {
         const obj = row;
         obj.projectDescription = item.projectDescription;
         obj.projectId = projectId;
-        console.log(obj);
         axios
           .post('http://123.207.39.209:8090/managerProject/modifyProject', obj, {
             headers: { 'Content-Type': 'application/json;charset=UTF-8' },
@@ -272,10 +271,10 @@ export default class EditableTable extends Component {
     });
     const tabContent = [
       <span>
-        <Icon type="user" />传感器信息
+        <Icon type="global" />传感器信息
       </span>,
       <span>
-        <Icon type="pie-chart" />添加传感器
+        <Icon type="plus-circle-o" />添加传感器
       </span>,
     ];
 
