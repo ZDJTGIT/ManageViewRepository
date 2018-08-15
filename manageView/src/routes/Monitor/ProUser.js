@@ -3,6 +3,7 @@ import { Row, Col, Card, Tabs, Table, message, Badge, Button, Icon, Select, Moda
 import axios from 'axios';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './ProUser.less';
+import '../Config';
 
 const { TabPane } = Tabs;
 const { Option } = Select;
@@ -42,7 +43,7 @@ export default class ProUser extends Component {
 
   componentWillMount() {
     axios
-      .get('http://123.207.39.209:8090/manager/userAndPro')
+      .get(`http://${global.constants.onlineWeb}/manager/userAndPro`)
       .then(result => {
         const userList1 = result.data.data.userList;
         const projectList1 = result.data.data.projectList;
@@ -71,7 +72,7 @@ export default class ProUser extends Component {
   // 下拉开始
   handleChange(value) {
     axios
-      .get(`http://123.207.39.209:8090/manager/queryProjectByUserId?userId=${value}`)
+      .get(`http://${global.constants.onlineWeb}/manager/queryProjectByUserId?userId=${value}`)
       .then(result => {
         const userHasPros = result.data.data;
         this.setState({
@@ -84,17 +85,17 @@ export default class ProUser extends Component {
         message.error('获取用户列表失败');
       });
     axios
-      .get(`http://123.207.39.209:8090/manager/queryNoProjectByUserId?userId=${value}`)
+      .get(`http://${global.constants.onlineWeb}/manager/queryNoProjectByUserId?userId=${value}`)
       .then(result => {
-        const userNoHasProjects = result.data.data;
-        const temp = [];
-        for (let i = 0; i < userNoHasProjects.length; i += 1) {
-          temp.push({
-            key: i,
-            projectName: userNoHasProjects[i].projectName,
-          });
-        }
-        this.setState({ selectedUserHasNoPros: temp });
+        // const userNoHasProjects = result.data.data;
+        // const temp = [];
+        // for (let i = 0; i < userNoHasProjects.length; i += 1) {
+        //   temp.push({
+        //     key: i,
+        //     projectName: userNoHasProjects[i].projectName,
+        //   });
+        // }
+        this.setState({ selectedUserHasNoPros: result.data.data });
       })
       .catch(() => {
         message.error('获取用户项目数据异常');
@@ -103,7 +104,7 @@ export default class ProUser extends Component {
 
   projectHandleChange(value) {
     axios
-      .get(`http://123.207.39.209:8090/manager/queryUserByProjectId?projectId=${value}`)
+      .get(`http://${global.constants.onlineWeb}/manager/queryUserByProjectId?projectId=${value}`)
       .then(result => {
         const projectHasUsers = result.data.data;
         this.setState({
@@ -116,7 +117,7 @@ export default class ProUser extends Component {
         message.error('获取项目列表失败');
       });
     axios
-      .get(`http://123.207.39.209:8090/manager/queryNoUserByProjectId?projectId=${value}`)
+      .get(`http://${global.constants.onlineWeb}/manager/queryNoUserByProjectId?projectId=${value}`)
       .then(result => {
         const projectNoHasUsers = result.data.data;
         const temp = [];
@@ -163,7 +164,7 @@ export default class ProUser extends Component {
       }
       const json = JSON.stringify(temp);
       axios
-        .post('http://123.207.39.209:8090/manager/addProjectsToUsert', json, {
+        .post(`http://${global.constants.onlineWeb}/manager/addProjectsToUsert`, json, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         })
         .then(() => {
@@ -198,7 +199,7 @@ export default class ProUser extends Component {
       }
       const json = JSON.stringify(temp);
       axios
-        .post('http://123.207.39.209:8090/manager/addUserToProject', json, {
+        .post(`http://${global.constants.onlineWeb}/manager/addUserToProject`, json, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         })
         .then(() => {
@@ -273,7 +274,7 @@ export default class ProUser extends Component {
           );
           const end = (
             <span>
-              <Badge status="default" />已结束
+              <Badge status="warning" />已结束
             </span>
           );
           if (record.projectStatus === 22) {
@@ -302,7 +303,9 @@ export default class ProUser extends Component {
                   onOk: () => {
                     axios
                       .delete(
-                        `http://123.207.39.209:8090/manager/deleteProjectForUser?userId=${currentUser}&projectId=${
+                        `http://${
+                          global.constants.onlineWeb
+                        }/manager/deleteProjectForUser?userId=${currentUser}&projectId=${
                           record.projectId
                         }`
                       )
@@ -360,7 +363,9 @@ export default class ProUser extends Component {
                   onOk: () => {
                     axios
                       .delete(
-                        `http://123.207.39.209:8090/manager/deleteUserForProject?projectId=${currentProject}&userId=${
+                        `http://${
+                          global.constants.onlineWeb
+                        }/manager/deleteUserForProject?projectId=${currentProject}&userId=${
                           record.userId
                         }`
                       )
@@ -385,7 +390,10 @@ export default class ProUser extends Component {
     ];
     // 添加项目
 
-    const addColumns = [{ title: '项目名称', dataIndex: 'projectName', key: 'projectName' }];
+    const addColumns = [
+      { title: '项目ID', dataIndex: 'projectId', key: 'projectID' },
+      { title: '项目名称', dataIndex: 'projectName', key: 'projectName' },
+    ];
 
     const addUserColumns = [
       { title: '用户名', dataIndex: 'userName', key: 'userId' },
@@ -397,7 +405,7 @@ export default class ProUser extends Component {
       onChange: (selectedRowKeys, selectedRows) => {
         const temp = [];
         for (let i = 0; i < selectedRowKeys.length; i += 1) {
-          temp.push(selectedRows[i].projectName);
+          temp.push(selectedRows[i].projectId);
         }
         this.setState({ selectedRowKeys1: selectedRowKeys, selectedProjects: temp });
       },
@@ -451,6 +459,7 @@ export default class ProUser extends Component {
                 bordered
                 dataSource={selectedUserHasPros}
                 style={{ marginTop: '2vh' }}
+                scroll={{ x: 700 }}
               />
             </TabPane>
             <TabPane tab={tabContent[1]} key="2">
@@ -486,6 +495,7 @@ export default class ProUser extends Component {
                 bordered
                 dataSource={selectedProjectHasUsers}
                 style={{ marginTop: '2vh' }}
+                scroll={{ x: 400 }}
               />
             </TabPane>
           </Tabs>
@@ -495,11 +505,13 @@ export default class ProUser extends Component {
           visible={showAddProModal}
           onOk={this.addOk}
           onCancel={this.addCancel}
+          width={800}
         >
           <Table
             rowSelection={rowSelection}
             columns={addColumns}
             dataSource={selectedUserHasNoPros}
+            scroll={{ x: 500 }}
           />
         </Modal>
         <Modal
@@ -507,11 +519,13 @@ export default class ProUser extends Component {
           visible={showAddUserModal}
           onOk={this.addUserOk}
           onCancel={this.addUserCancel}
+          width={800}
         >
           <Table
             rowSelection={rowSelectionForPro}
             columns={addUserColumns}
             dataSource={selectedProjectHasNoUsers}
+            scroll={{ x: 340 }}
           />
         </Modal>
       </PageHeaderLayout>

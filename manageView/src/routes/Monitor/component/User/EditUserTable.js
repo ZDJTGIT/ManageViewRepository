@@ -1,61 +1,15 @@
 import React, { Component } from 'react';
-import { Table, InputNumber, Input, Form, Popconfirm, message, Divider, Modal } from 'antd';
+import { Table, message, Divider, Modal, Badge, Form } from 'antd';
 import axios from 'axios';
+import EditUserForm from './EditUserForm.js';
+import '../../../Config';
 
 const { confirm } = Modal;
 // 可编辑表格
-const EditableContext = React.createContext();
-const FormItem = Form.Item;
-
-const EditableRow = ({ form, index, ...props }) => (
-  <EditableContext.Provider value={form}>
-    <tr {...props} />
-  </EditableContext.Provider>
-);
-
-const EditableFormRow = Form.create()(EditableRow);
-
-const EditableCell = Form.create()(props => {
-  const getInput = () => {
-    const { inputType } = props;
-    if (inputType === 'number') {
-      return <InputNumber />;
-    }
-    return <Input />;
-  };
-  const { editing, dataIndex, title, inputType, record, index, ...restProps } = props;
-  return (
-    <EditableContext.Consumer>
-      {form => {
-        const { getFieldDecorator } = form;
-        return (
-          <td {...restProps}>
-            {editing ? (
-              <FormItem style={{ margin: 0 }}>
-                {getFieldDecorator(dataIndex, {
-                  rules: [
-                    {
-                      required: true,
-                      message: `Please Input ${title}!`,
-                    },
-                  ],
-                  initialValue: record[dataIndex],
-                })(getInput())}
-              </FormItem>
-            ) : (
-              restProps.children
-            )}
-          </td>
-        );
-      }}
-    </EditableContext.Consumer>
-  );
-});
-
 export default class EditableTable extends Component {
   constructor(props) {
     super(props);
-    this.state = { editingKey: '' };
+    this.state = { editingKey: '', editingUser: '' };
     const { refresh } = this.props;
     this.columns = [
       { title: '用户名称', dataIndex: 'userName', key: 'userId' },
@@ -64,33 +18,36 @@ export default class EditableTable extends Component {
       { title: '所属公司', dataIndex: 'company', key: 'company', editable: true },
       { title: '负责人', dataIndex: 'realName', key: 'realName', editable: true },
       { title: '创建时间', dataIndex: 'createTime', key: 'createTime', editable: true },
-      { title: '状态', dataIndex: 'status', key: 'status', editable: true },
+      {
+        title: '状态',
+        dataIndex: 'status',
+        key: 'status',
+        editable: true,
+        render(record) {
+          const frozen = (
+            <span>
+              <Badge status="default" />冻结
+            </span>
+          );
+          const common = (
+            <span>
+              <Badge status="success" />正常
+            </span>
+          );
+          if (record === '正常') {
+            return common;
+          } else {
+            return frozen;
+          }
+        },
+      },
       {
         title: '操作',
         dataIndex: 'operation',
         key: 'operation',
         render: (text, record) => {
-          const editable = this.isEditing(record);
           return (
             <div>
-              {editable ? (
-                <span>
-                  <EditableContext.Consumer>
-                    {form => (
-                      <a onClick={() => this.save(form, record.userId)} style={{ marginRight: 8 }}>
-                        保存
-                      </a>
-                    )}
-                  </EditableContext.Consumer>
-                  <Popconfirm title="确认取消编辑？" onConfirm={() => this.cancel(record.userId)}>
-                    <a>取消</a>
-                  </Popconfirm>
-                </span>
-              ) : (
-                <a onClick={() => this.edit(record.userId)}>编辑</a>
-                // <a onClick={()=>{console.log(record)}}>Edit</a>
-              )}
-              <Divider type="vertical" />
               <a
                 onClick={() => {
                   confirm({
@@ -102,9 +59,9 @@ export default class EditableTable extends Component {
                     onOk: () => {
                       axios
                         .delete(
-                          `http://123.207.39.209:8090/managerUser/deleteUserByUserId?userId=${
-                            record.userId
-                          }`
+                          `http://${
+                            global.constants.onlineWeb
+                          }/managerUser/deleteUserByUserId?userId=${record.userId}`
                         )
                         .then(() => {
                           message.success('删除用户成功!');
@@ -119,6 +76,8 @@ export default class EditableTable extends Component {
               >
                 删除
               </a>
+              <Divider type="vertical" />
+              <a onClick={() => this.modify(record)}>编辑</a>
             </div>
           );
         },
@@ -126,82 +85,62 @@ export default class EditableTable extends Component {
     ];
   }
 
-  isEditing = record => {
-    const { editingKey } = this.state;
-    return record.userId === editingKey;
+  modify = record => {
+    this.setState({ editingKey: record.userId, editingUser: record });
   };
 
-  cancel = () => {
-    this.setState({ editingKey: '' });
-  };
-
-  edit(userId) {
-    this.setState({ editingKey: userId });
-  }
-
-  save(form, userId) {
-    const { data1, refresh } = this.props;
-    form.validateFields((error, row) => {
-      if (error) {
-        return;
-      }
-      const newData = [...data1];
-      const index = newData.findIndex(item => userId === item.userId);
-      if (index > -1) {
-        const item = newData[index];
-        const obj = row;
-        obj.userId = item.userId;
-        obj.password = item.password;
-        obj.userName = item.userName;
+  modifyOk = e => {
+    const { editingUser } = this.state;
+    const { props } = this;
+    e.preventDefault();
+    const dom = this.edit;
+    dom.validateFields((err, values) => {
+      const t = values.time;
+      if (!err) {
+        const value = values;
+        value.createTime = t.format('YYYY-MM-DD HH:mm:ss');
+        value.userId = editingUser.userId;
         axios
-          .post('http://123.207.39.209:8090/managerUser/modifyUser', obj, {
+          .post(`http://${global.constants.onlineWeb}/managerUser/modifyUser`, value, {
             headers: { 'Content-Type': 'application/json;charset=UTF-8' },
           })
           .then(() => {
-            message.success('修改用户成功!');
-            this.setState({ editingKey: '' });
-            refresh();
+            message.success('修改用户成功');
+            this.setState({ editingKey: '', editingUser: '' });
+            props.refresh();
           })
-          .catch(() => message.error('修改用户失败，请重试一次'));
-      } else {
-        message.error('获取修改用户失败，请联系开发人员!');
+          .catch(() => {
+            message.error('修改用户失败');
+          });
       }
     });
-  }
+  };
 
   render() {
     const { data1 } = this.props;
-    const components = {
-      body: {
-        row: EditableFormRow,
-        cell: EditableCell,
-      },
-    };
-
-    const columns = this.columns.map(col => {
-      if (!col.editable) {
-        return col;
-      }
-      return {
-        ...col,
-        onCell: record => ({
-          record,
-          inputType: col.dataIndex === 'age' ? 'number' : 'text',
-          dataIndex: col.dataIndex,
-          title: col.title,
-          editing: this.isEditing(record),
-        }),
-      };
-    });
-
+    const { editingKey, editingUser } = this.state;
+    const { columns } = this;
     return (
-      <Table
-        components={components}
-        bordered
-        dataSource={data1}
-        columns={columns}
-        rowClassName="editable-row"
-      />
+      <div>
+        <Table bordered dataSource={data1} columns={columns} scroll={{ x: 1200 }} />
+        <Modal
+          title={`正在编辑：${editingUser.userName}`}
+          visible={editingKey !== ''}
+          onCancel={() => {
+            this.setState({ editingKey: '', editingUser: '' });
+            this.edit.resetFields();
+          }}
+          onOk={this.modifyOk}
+        >
+          <EditUserFromImp
+            ref={r => {
+              this.edit = r;
+            }}
+            data={editingUser}
+          />
+        </Modal>
+      </div>
     );
   }
 }
+const EditUserFromImp = Form.create()(EditUserForm);

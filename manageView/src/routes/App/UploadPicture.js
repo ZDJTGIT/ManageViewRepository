@@ -3,6 +3,7 @@ import { Upload, Icon, Modal, message, Button, Row, Col, Input, Card } from 'ant
 import axios from 'axios';
 import { isNull } from 'util';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout.js';
+import '../Config';
 
 const { TextArea } = Input;
 export default class UploadPicture extends Component {
@@ -54,7 +55,7 @@ export default class UploadPicture extends Component {
     });
 
     axios({
-      url: 'http://123.207.39.209:8090/app/uploadPictures',
+      url: `http://${global.constants.onlineWeb}/app/uploadPictures`,
       method: 'post',
       processData: false,
       data: formData,
@@ -106,7 +107,7 @@ export default class UploadPicture extends Component {
           <Row gutter={1}>
             <Col span={10}>
               <Upload
-                action="http://123.207.39.209:8090/app/uploadPictures"
+                action={`http://${global.constants.onlineWeb}/app/uploadPictures`}
                 listType="picture"
                 fileList={fileList}
                 onPreview={this.handlePreview}

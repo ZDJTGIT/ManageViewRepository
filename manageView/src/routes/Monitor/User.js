@@ -5,6 +5,7 @@ import EditableTable from './component/User/EditUserTable.js';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout.js';
 import AddUserForm from './component/User/AddUserTable.js';
 import styles from './User.less';
+import '../Config';
 
 export default class User extends Component {
   constructor(props) {
@@ -23,7 +24,7 @@ export default class User extends Component {
 
   componentWillMount() {
     axios
-      .get('http://123.207.39.209:8090/managerUser/queryAllUser')
+      .get(`http://${global.constants.onlineWeb}/managerUser/queryAllUser`)
       .then(result => {
         this.setState({ users: result.data.data });
         this.setState({ showAddButton: 6 });

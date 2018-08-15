@@ -13,6 +13,7 @@ import {
   Progress,
 } from 'antd';
 import axios from 'axios';
+import '../../../Config';
 
 const { RangePicker } = DatePicker;
 const { TextArea } = Input;
@@ -41,11 +42,19 @@ export default class AddProjectForm extends Component {
     this.handleReset = this.handleReset.bind(this);
     this.parseTime = this.parseTime.bind(this);
     this.progressCancel = this.progressCancel.bind(this);
+    this.checkProject = this.checkProject.bind(this);
+    this.checkProjectType = this.checkProjectType.bind(this);
+    this.checkProjectAddress = this.checkProjectAddress.bind(this);
+    this.checkWeatherAddress = this.checkWeatherAddress.bind(this);
+    this.checkProjectLongitude = this.checkProjectLongitude.bind(this);
+    this.checkProjectLatitude = this.checkProjectLatitude.bind(this);
+    this.checkProjectTime = this.checkProjectTime.bind(this);
+    this.checkProjectState = this.checkProjectState.bind(this);
   }
 
   componentWillMount() {
     axios
-      .get('http://123.207.39.209:8090/managerProject/getCreateProjectData')
+      .get(`http://${global.constants.onlineWeb}/managerProject/getCreateProjectData`)
       .then(result => {
         const getStatus = result.data.data.projectStatusData;
         const statetemp = [];
@@ -95,17 +104,10 @@ export default class AddProjectForm extends Component {
           projectType1: value.projectType,
           weatherAddress: value.weatherAddress,
         });
-        const formData = new FormData(document.getElementById('subForm'));
-        // delete value.projectTime;
-        // value.projectBeginTime = projectBeginTime;
-        // value.projectEndTime = projectEndTime;
-        // fileList.forEach((file) => {
-        //   data.append('file', file);
-        // });
-        // data.append('project',value);
         setTimeout(() => {
+          const formData = new FormData(document.getElementById('subForm'));
           axios
-            .post('http://123.207.39.209:8090/managerProject/insertProject', formData, {
+            .post(`http://${global.constants.onlineWeb}/managerProject/insertProject`, formData, {
               headers: {
                 'Content-Type': 'multipart/form-data;charset=UTF-8',
               },
@@ -139,6 +141,107 @@ export default class AddProjectForm extends Component {
     this.setState({ projectBeginTime: dateString[0], projectEndTime: dateString[1] });
   }
 
+  // 检查项目名
+  checkProject(rule, value, callback) {
+    const regu1 = '^[ ]+$';
+    const reg1 = new RegExp(regu1);
+    if (value != null && value !== '' && !reg1.test(value)) {
+      callback();
+    } else {
+      callback('项目名不能为空');
+    }
+  }
+
+  // 检查项目类型
+  checkProjectType(rule, value, callback) {
+    const regu1 = '^[ ]+$';
+    const reg1 = new RegExp(regu1);
+    if (value != null && value !== '' && !reg1.test(value)) {
+      callback();
+    } else {
+      callback('项目类型不能为空');
+    }
+  }
+
+  // 检查项目地址
+  checkProjectAddress(rule, value, callback) {
+    const regu1 = '^[ ]+$';
+    const reg1 = new RegExp(regu1);
+    if (value != null && value !== '' && !reg1.test(value)) {
+      callback();
+    } else {
+      callback('项目地址不能为空');
+    }
+  }
+
+  // 检查天气地址
+  checkWeatherAddress(rule, value, callback) {
+    const regu1 = '^[ ]+$';
+    const reg1 = new RegExp(regu1);
+    if (value != null && value !== '' && !reg1.test(value)) {
+      callback();
+    } else {
+      callback('天气地址不能为空');
+    }
+  }
+
+  // 检查项目经度
+  checkProjectLongitude(rule, value, callback) {
+    const regu1 = '^[ ]+$';
+    const reg1 = new RegExp(regu1);
+    if (value != null && value !== '' && !reg1.test(value)) {
+      const regu2 =
+        '^(\\-|\\+)?(((\\d|[1-9]\\d|1[0-7]\\d|0{1,3})\\.\\d{6,10})|(\\d|[1-9]\\d|1[0-7]\\d|0{1,3})|180\\.0{6,10}|180)$';
+      const reg2 = new RegExp(regu2);
+      if (reg2.test(value)) {
+        callback();
+      } else {
+        callback('请输入正确的经度。小数位在6-10');
+      }
+    } else {
+      callback('项目经度不能为空');
+    }
+  }
+
+  // 检查项目纬度
+  checkProjectLatitude(rule, value, callback) {
+    const regu1 = '^[ ]+$';
+    const reg1 = new RegExp(regu1);
+    if (value != null && value !== '' && !reg1.test(value)) {
+      const regu2 = '^(\\-|\\+)?([0-8]?\\d{1}\\.\\d{6,8}|90\\.0{6,8}|[0-8]?\\d{1}|90)$';
+      const reg2 = new RegExp(regu2);
+      if (reg2.test(value)) {
+        callback();
+      } else {
+        callback('请输入正确的纬度。小数位在6-10');
+      }
+    } else {
+      callback('项目纬度不能为空');
+    }
+  }
+
+  // 检查项目时间
+  checkProjectTime(rule, value, callback) {
+    const regu1 = '^[ ]+$';
+    const reg1 = new RegExp(regu1);
+    if (value != null && value !== '' && !reg1.test(value)) {
+      callback();
+    } else {
+      callback('项目时间不能为空');
+    }
+  }
+
+  // 检查项目状态
+  checkProjectState(rule, value, callback) {
+    const regu1 = '^[ ]+$';
+    const reg1 = new RegExp(regu1);
+    if (value != null && value !== '' && !reg1.test(value)) {
+      callback();
+    } else {
+      callback('项目状态不能为空');
+    }
+  }
+
   render() {
     const { form } = this.props;
     const { getFieldDecorator } = form;
@@ -167,7 +270,10 @@ export default class AddProjectForm extends Component {
       <Form layout="horizontal" onSubmit={this.handleSubmit} encType="multipart/form-data">
         <FormItem hasFeedback label="项目名称:" {...formItemLayout}>
           {getFieldDecorator('projectName', {
-            rules: [{ required: true, message: '请输入项目名称' }],
+            rules: [
+              { required: true, message: '请输入项目名称' },
+              { validator: this.checkProject },
+            ],
           })(
             <Input
               type="text"
@@ -178,7 +284,10 @@ export default class AddProjectForm extends Component {
         </FormItem>
         <FormItem hasFeedback label="项目类型:" {...formItemLayout}>
           {getFieldDecorator('projectType', {
-            rules: [{ required: true, message: '请选择项目类型' }],
+            rules: [
+              { required: true, message: '请选择项目类型' },
+              { validator: this.checkProjectType },
+            ],
           })(
             <Select>
               {projectType.map(v => {
@@ -193,7 +302,10 @@ export default class AddProjectForm extends Component {
         </FormItem>
         <FormItem hasFeedback label="项目地址:" {...formItemLayout}>
           {getFieldDecorator('projectAddress', {
-            rules: [{ required: true, message: '请输入项目地址' }],
+            rules: [
+              { required: true, message: '请输入项目地址' },
+              { validator: this.checkProjectAddress },
+            ],
           })(
             <Input
               type="text"
@@ -204,7 +316,10 @@ export default class AddProjectForm extends Component {
         </FormItem>
         <FormItem hasFeedback label="天气地点:" {...formItemLayout}>
           {getFieldDecorator('weatherAddress', {
-            rules: [{ required: true, message: '请输入天气地点' }],
+            rules: [
+              { required: true, message: '请输入天气地点' },
+              { validator: this.checkWeatherAddress },
+            ],
           })(
             <Input
               type="text"
@@ -215,7 +330,10 @@ export default class AddProjectForm extends Component {
         </FormItem>
         <FormItem hasFeedback label="经度:" {...formItemLayout}>
           {getFieldDecorator('projectLongitude', {
-            rules: [{ required: true, message: '请输入经度' }],
+            rules: [
+              { required: true, message: '请输入经度' },
+              { validator: this.checkProjectLongitude },
+            ],
           })(
             <Input
               type="text"
@@ -226,7 +344,10 @@ export default class AddProjectForm extends Component {
         </FormItem>
         <FormItem hasFeedback label="纬度:" {...formItemLayout}>
           {getFieldDecorator('projectLatitude', {
-            rules: [{ required: true, message: '请输入纬度' }],
+            rules: [
+              { required: true, message: '请输入纬度' },
+              { validator: this.checkProjectLatitude },
+            ],
           })(
             <Input
               type="text"
@@ -237,19 +358,26 @@ export default class AddProjectForm extends Component {
         </FormItem>
         <FormItem hasFeedback label="项目时间:" {...formItemLayout}>
           {getFieldDecorator('projectTime', {
-            rules: [{ required: true, message: '请选择项目开始、结束时间' }],
+            rules: [
+              { required: true, message: '请选择项目开始、结束时间' },
+              { validator: this.checkProjectTime },
+            ],
           })(
             <RangePicker
               showTime={{ format: 'HH:mm:ss' }}
               format="YYYY-MM-DD HH:mm:ss"
               placeholder={['项目开始时间', '项目结束时间']}
               onChange={this.parseTime}
+              style={{ width: '100%' }}
             />
           )}
         </FormItem>
         <FormItem hasFeedback label="项目状态:" {...formItemLayout}>
           {getFieldDecorator('projectStatus', {
-            rules: [{ required: true, message: '请选择项目状态' }],
+            rules: [
+              { required: true, message: '请选择项目状态' },
+              { validator: this.checkProjectState },
+            ],
           })(
             <Select>
               {projectStatus.map(v => {
@@ -264,7 +392,7 @@ export default class AddProjectForm extends Component {
         </FormItem>
         <FormItem hasFeedback label="项目描述:" {...formItemLayout}>
           {getFieldDecorator('projectDescription', {
-            rules: [{ required: true, message: '请输入项目描述' }],
+            rules: [],
           })(
             <TextArea
               prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}

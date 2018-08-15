@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import pathToRegexp from 'path-to-regexp';
 import { Breadcrumb, Tabs } from 'antd';
 import classNames from 'classnames';
+import { urlToList } from 'components/_utils/pathTools';
 import styles from './index.less';
-import { urlToList } from '../_utils/pathTools';
 
 const { TabPane } = Tabs;
 export function getBreadcrumb(breadcrumbNameMap, url) {

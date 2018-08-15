@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Row, Col, message, Button, Icon, Form, Input } from 'antd';
 import axios from 'axios';
+import '../../../Config';
 
 const FormItem = Form.Item;
 export default class AddUserForm extends Component {
@@ -31,7 +32,7 @@ export default class AddUserForm extends Component {
       if (!err) {
         delete value.confirmPassword;
         axios
-          .post('http://123.207.39.209:8090/managerUser/insertUser', value, {
+          .post(`http://${global.constants.onlineWeb}/managerUser/insertUser`, value, {
             headers: { 'Content-Type': 'application/json;charset=UTF-8' },
           })
           .then(() => {
@@ -198,7 +199,7 @@ export default class AddUserForm extends Component {
         </FormItem>
         <FormItem hasFeedback label="密码:" {...formItemLayout}>
           {getFieldDecorator('password', {
-            rules: [{ required: true, message: '请输入密码', validator: this.checkPassword }],
+            rules: [{ required: true, message: '请输入密码' }, { validator: this.checkPassword }],
           })(
             <Input
               type="password"
@@ -209,7 +210,10 @@ export default class AddUserForm extends Component {
         </FormItem>
         <FormItem hasFeedback label="确认密码:" {...formItemLayout}>
           {getFieldDecorator('confirmPassword', {
-            rules: [{ required: true, message: '请再次输入密码', validator: this.confirmPassword }],
+            rules: [
+              { required: true, message: '请再次输入密码' },
+              { validator: this.confirmPassword },
+            ],
           })(
             <Input
               type="password"
@@ -220,7 +224,7 @@ export default class AddUserForm extends Component {
         </FormItem>
         <FormItem hasFeedback label="手机号码:" {...formItemLayout}>
           {getFieldDecorator('phone', {
-            rules: [{ required: true, message: '请输入手机号码', validator: this.checkPhone }],
+            rules: [{ required: true, message: '请输入手机号码' }, { validator: this.checkPhone }],
           })(
             <Input
               type="text"
@@ -231,7 +235,7 @@ export default class AddUserForm extends Component {
         </FormItem>
         <FormItem hasFeedback label="邮箱:" {...formItemLayout}>
           {getFieldDecorator('email', {
-            rules: [{ required: true, message: '请输入邮箱', validator: this.checkEmail }],
+            rules: [{ required: true, message: '请输入邮箱' }, { validator: this.checkEmail }],
           })(
             <Input
               type="text"
@@ -242,7 +246,7 @@ export default class AddUserForm extends Component {
         </FormItem>
         <FormItem hasFeedback label="公司:" {...formItemLayout}>
           {getFieldDecorator('company', {
-            rules: [{ required: true, message: '请输入公司', validator: this.checkCompany }],
+            rules: [{ required: true, message: '请输入公司' }, { validator: this.checkCompany }],
           })(
             <Input
               type="text"
@@ -253,7 +257,10 @@ export default class AddUserForm extends Component {
         </FormItem>
         <FormItem hasFeedback label="姓名:" {...formItemLayout}>
           {getFieldDecorator('realName', {
-            rules: [{ required: true, message: '请输入负责人姓名', validator: this.checkRealName }],
+            rules: [
+              { required: true, message: '请输入负责人姓名' },
+              { validator: this.checkRealName },
+            ],
           })(
             <Input
               type="text"
@@ -264,7 +271,7 @@ export default class AddUserForm extends Component {
         </FormItem>
         <hr />
         <FormItem style={{ marginBottom: '0px' }}>
-          <Row gutter={1}>
+          <Row gutter={4}>
             <Col span={4} offset={13}>
               <Button onClick={this.handleReset}>重置</Button>
             </Col>
