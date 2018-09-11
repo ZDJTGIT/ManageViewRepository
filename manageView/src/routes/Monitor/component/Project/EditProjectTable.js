@@ -25,8 +25,8 @@ export default class EditableTable extends Component {
       editingProject: '',
       projectStatus: [],
       projectType: [],
-      filterStatus: [],
-      filterType: [],
+      // filterStatus: [],
+      // filterType: [],
     };
 
     this.showSensorModal = this.showSensorModal.bind(this);
@@ -40,27 +40,27 @@ export default class EditableTable extends Component {
       .then(result => {
         const getStatus = result.data.data.projectStatusData;
         const statetemp = [];
-        const filterStatetemp = [];
+        // const filterStatetemp = [];
         for (const key in getStatus) {
           if (key != null) {
             statetemp.push({ x: key, y: getStatus[key] });
-            filterStatetemp.push({ text: getStatus[key], value: key });
+            // filterStatetemp.push({ text: getStatus[key], value: key });
           }
         }
         const getType = result.data.data.projectTypeData;
         const typetemp = [];
-        const filterTypetemp = [];
+        // const filterTypetemp = [];
         for (const key in getType) {
           if (key != null) {
             typetemp.push({ x: key, y: getType[key] });
-            filterTypetemp.push({ text: getType[key], value: key });
+            // filterTypetemp.push({ text: getType[key], value: key });
           }
         }
         this.setState({
           projectStatus: statetemp,
           projectType: typetemp,
-          filterStatus: filterStatetemp,
-          filterType: filterTypetemp,
+          // filterStatus: filterStatetemp,
+          // filterType: filterTypetemp,
         });
       })
       .catch(() => {
@@ -142,7 +142,7 @@ export default class EditableTable extends Component {
 
   render() {
     const { refresh } = this.props;
-    const { projectStatus, projectType, filterStatus, filterType } = this.state;
+    const { projectStatus, projectType } = this.state;
     const columns = [
       { title: '项目id', dataIndex: 'projectId', key: 'projectId', fixed: 'left', sorter: true },
       { title: '项目名称', dataIndex: 'projectName', key: 'projectName' },
@@ -159,7 +159,7 @@ export default class EditableTable extends Component {
           }
           return <span>{re}</span>;
         },
-        filters: filterType,
+        // filters: filterType,
       },
       { title: '项目地址', dataIndex: 'projectAddress', key: 'projectAddress' },
       { title: '天气地点', dataIndex: 'weatherAddress', key: 'weatherAddress' },
@@ -171,7 +171,7 @@ export default class EditableTable extends Component {
         title: '项目状态',
         dataIndex: 'projectStatus',
         key: 'projectStatus',
-        filters: filterStatus,
+        // filters: filterStatus,
         render(record) {
           const notStart = (
             <span>

@@ -150,7 +150,7 @@ export default class SensorEditableTable extends Component {
           dataSource={sensorData}
           columns={column}
           rowClassName="editable-row"
-          scroll={{ x: 720 }}
+          scroll={{ x: 750 }}
         />
         <Modal
           width={700}

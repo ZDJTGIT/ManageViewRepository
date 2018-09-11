@@ -65,7 +65,7 @@ export default class AddSensorTable extends Component {
               .then(() => {
                 message.success('新增传感器成功');
                 setTimeout(() => {
-                  this.handleReset();
+                  // this.handleReset();
                   refresh();
                 }, 400);
               })
@@ -81,7 +81,7 @@ export default class AddSensorTable extends Component {
             .then(() => {
               message.success('新增传感器成功');
               setTimeout(() => {
-                this.handleReset();
+                // this.handleReset();
                 refresh();
               }, 400);
             })

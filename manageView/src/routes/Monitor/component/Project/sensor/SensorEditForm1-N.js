@@ -27,7 +27,7 @@ export default class SensorEditForm extends Component {
               type="text"
               prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
               placeholder="测点名称"
-              disabled
+              // disabled
             />
           )}
         </FormItem>
