@@ -100,6 +100,9 @@ export const getRouterData = app => {
     '/monitor/user': {
       component: dynamicWrapper(app, ['monitor'], () => import('../routes/Monitor/User')),
     },
+    '/monitor/target': {
+      component: dynamicWrapper(app, ['monitor'], () => import('../routes/Monitor/Target')),
+    },
     '/monitor/pro-user': {
       component: dynamicWrapper(app, ['monitor'], () => import('../routes/Monitor/ProUser')),
     },

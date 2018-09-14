@@ -26,6 +26,10 @@ const menuData = [
         path: 'user',
       },
       {
+        name: '指标管理',
+        path: 'target',
+      },
+      {
         name: '项目用户关系模块',
         path: 'pro-user',
       },
