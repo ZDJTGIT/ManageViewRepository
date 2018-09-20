@@ -1,7 +1,23 @@
 import React, { Component } from 'react';
-import { Row, Col, Card, Tabs, Table, message, Badge, Button, Icon, Select, Modal } from 'antd';
+import {
+  Row,
+  Col,
+  Card,
+  Tabs,
+  Table,
+  message,
+  Badge,
+  Button,
+  Icon,
+  Select,
+  Modal,
+  Form,
+  Divider,
+} from 'antd';
 import axios from 'axios';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
+import AddAlarmLinkMan from './component/AlarmLinkman/AddAlarmLinkman';
+import ModifyAlarmLinkman from './component/AlarmLinkman/ModifyAlarmLinkman';
 import styles from './ProUser.less';
 import '../Config';
 
@@ -9,6 +25,7 @@ const { TabPane } = Tabs;
 const { Option } = Select;
 const { confirm } = Modal;
 
+@Form.create()
 export default class ProUser extends Component {
   constructor(props) {
     super(props);
@@ -20,7 +37,7 @@ export default class ProUser extends Component {
       showAddButton: 0, // 是否显示用户处拓展栏
       showAddUserButton: 0, // 是否显示项目处添加用户拓展栏
       currentUser: '', // 当前选中用户
-      currentProject: '', // 当前选中项目
+      currentProject: '', // 当前选中项目id
       showAddProModal: false, // 是否显示添加项目对话框
       showAddUserModal: false, // 是否显示添加用户对话框
       selectedProjects: [], // 添加项目选中的项目
@@ -29,6 +46,10 @@ export default class ProUser extends Component {
       selectedProjectHasNoUsers: [], // 选中的项目未拥有的用户
       selectedRowKeys1: [], // 选中的项目行的key
       selectedRowKeys2: [], // 选中的用户行的key
+      userType: true, // 用户类型 true为普通用户（切换到告警），false为告警用户（切换到普通）
+      selectedProjectHasAlarmLinkman: [], // 选中项目所含告警联系人
+      selectedAlarmLinkman: [], // 选中的告警人
+      showModifyAlarmLinkman: false, // 显示修改告警人对话框
     };
     this.setState = this.setState.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -69,6 +90,107 @@ export default class ProUser extends Component {
       });
   }
 
+  modiAlarmCancel = () => {
+    this.setState({ showModifyAlarmLinkman: false, selectedAlarmLinkman: [] });
+    this.modifyAlarmForm.resetFields();
+  };
+
+  modiAlarmOk = () => {
+    const { selectedAlarmLinkman, currentProject } = this.state;
+    // let projectNameStr = "";
+    // for(let i=0;i<projectOption.length;i+=1){
+    //   if(projectOption[i].x===currentProject){
+    //     projectNameStr = projectOption[i].y;
+    //     break;
+    //   }
+    // }
+    this.modifyAlarmForm.validateFields((error, values) => {
+      axios
+        .post(`http://${global.constants.onlineWeb}/manager/modifyAlarmLinkman`, {
+          // projectId:currentProject,
+          // projectName:projectNameStr,
+          alarmLinkmanId: selectedAlarmLinkman.alarmLinkmanId,
+          userName: values.userName,
+          phone: values.phone,
+          email: values.email,
+          status: values.status,
+        })
+        .then(result => {
+          message.success(result.data.msg);
+          this.setState({ showModifyAlarmLinkman: false, selectedAlarmLinkman: [] });
+          this.projectHandleChange(currentProject);
+          this.modifyAlarmForm.resetFields();
+        })
+        .catch(() => {
+          message.error('修改告警人失败！');
+        });
+    });
+  };
+
+  modAlarm = record => {
+    this.setState({ showModifyAlarmLinkman: true, selectedAlarmLinkman: record });
+  };
+
+  delAlarm = record => {
+    const { currentProject } = this.state;
+    confirm({
+      title: '确认删除该项目？',
+      content: record.userName,
+      okText: '确定',
+      okType: 'danger',
+      cancelText: '取消',
+      onOk: () => {
+        axios
+          .delete(`http://${global.constants.onlineWeb}/manager/deleteAlarmLinkman`, {
+            params: {
+              alarmLinkmanId: record.alarmLinkmanId,
+            },
+          })
+          .then(result => {
+            message.success(result.data.msg);
+            this.projectHandleChange(currentProject);
+          })
+          .catch(() => {
+            message.error('删除告警人失败');
+          });
+      },
+    });
+  };
+
+  // 添加告警人
+  AddAlarmLinkManOk = () => {
+    const { currentProject, projectOption } = this.state;
+    let projectNameStr = '';
+    for (let i = 0; i < projectOption.length; i += 1) {
+      if (projectOption[i].x === currentProject) {
+        projectNameStr = projectOption[i].y;
+        break;
+      }
+    }
+    this.addAlarmForm.validateFields((error, values) => {
+      setTimeout(() => {
+        axios
+          .post(`http://${global.constants.onlineWeb}/manager/addAlarmLinkman`, {
+            projectId: currentProject,
+            projectName: projectNameStr,
+            userName: values.userName,
+            phone: values.phone,
+            email: values.email,
+            status: values.status,
+          })
+          .then(result => {
+            message.success(result.data.msg);
+            this.setState({ showAddUserModal: false });
+            this.projectHandleChange(currentProject);
+            this.addAlarmForm.resetFields();
+          })
+          .catch(() => {
+            message.error('新增告警联系人失败');
+          });
+      }, 200);
+    });
+  };
+
   // 下拉开始
   handleChange(value) {
     axios
@@ -106,9 +228,10 @@ export default class ProUser extends Component {
     axios
       .get(`http://${global.constants.onlineWeb}/manager/queryUserByProjectId?projectId=${value}`)
       .then(result => {
-        const projectHasUsers = result.data.data;
+        const projectHasUsers = result.data.data.users;
         this.setState({
           selectedProjectHasUsers: projectHasUsers,
+          selectedProjectHasAlarmLinkman: result.data.data.alarmLinkman,
           showAddUserButton: 6,
           currentProject: value,
         });
@@ -240,6 +363,10 @@ export default class ProUser extends Component {
       currentProject,
       selectedRowKeys1,
       selectedRowKeys2,
+      userType,
+      selectedProjectHasAlarmLinkman,
+      showModifyAlarmLinkman,
+      selectedAlarmLinkman,
     } = this.state;
     const tabContent = [
       <span>
@@ -422,6 +549,50 @@ export default class ProUser extends Component {
       },
     };
 
+    const alramColums = [
+      { title: '告警人ID', dataIndex: 'alarmLinkmanId', key: 'alarmLinkmanId' },
+      { title: '用户名', dataIndex: 'userName', key: 'alarmUserName' },
+      { title: '电话', dataIndex: 'phone', key: 'alarmPhone' },
+      { title: '邮箱', dataIndex: 'email', key: 'alarmEmail' },
+      {
+        title: '状态',
+        dataIndex: 'status',
+        key: 'alarmStatus',
+        render: text => {
+          if (text === 1) {
+            return (
+              <span>
+                <Badge status="success" />启用
+              </span>
+            );
+          } else {
+            return (
+              <span>
+                <Badge status="error" />禁用
+              </span>
+            );
+          }
+        },
+      },
+      {
+        title: '操作',
+        dataIndex: 'alarmOption',
+        key: 'alarmOption',
+        render: (text, record) => (
+          <span>
+            <a onClick={() => this.delAlarm(record)}>删除</a>
+            <Divider type="vertical" />
+            <a
+              onClick={() => {
+                this.modAlarm(record);
+              }}
+            >
+              编辑
+            </a>
+          </span>
+        ),
+      },
+    ];
     return (
       <PageHeaderLayout title="项目用户关系模块">
         <Card className={styles.salesCard} bordered={false} bodyStyle={{ padding: 24 }}>
@@ -481,21 +652,32 @@ export default class ProUser extends Component {
                   );
                 })}
               </Select>
+              <Button
+                type="danger"
+                ghost
+                icon="swap"
+                style={{ marginLeft: 10 }}
+                onClick={() => {
+                  this.setState({ userType: !userType });
+                }}
+              >
+                切换为{userType ? '告警用户' : '普通用户'}
+              </Button>
               <Row>
                 <Col span={showAddUserButton} style={{ marginTop: '2vh' }}>
                   <div>
                     <Button type="primary" icon="plus" onClick={this.addUser}>
-                      添加用户
+                      添加{userType ? '普通' : '告警'}用户
                     </Button>
                   </div>
                 </Col>
               </Row>
               <Table
-                columns={projectColumns}
+                columns={userType ? projectColumns : alramColums}
                 bordered
-                dataSource={selectedProjectHasUsers}
+                dataSource={userType ? selectedProjectHasUsers : selectedProjectHasAlarmLinkman}
                 style={{ marginTop: '2vh' }}
-                scroll={{ x: 400 }}
+                scroll={{ x: 800 }}
               />
             </TabPane>
           </Tabs>
@@ -516,7 +698,7 @@ export default class ProUser extends Component {
         </Modal>
         <Modal
           title="为已有项目添加管理用户"
-          visible={showAddUserModal}
+          visible={showAddUserModal && userType}
           onOk={this.addUserOk}
           onCancel={this.addUserCancel}
           width={800}
@@ -526,6 +708,31 @@ export default class ProUser extends Component {
             columns={addUserColumns}
             dataSource={selectedProjectHasNoUsers}
             scroll={{ x: 340 }}
+          />
+        </Modal>
+        <Modal
+          visible={showAddUserModal && !userType}
+          onCancel={this.addUserCancel}
+          title="新增告警联系人"
+          onOk={this.AddAlarmLinkManOk}
+        >
+          <AddAlarmLinkMan
+            ref={c => {
+              this.addAlarmForm = c;
+            }}
+          />
+        </Modal>
+        <Modal
+          visible={showModifyAlarmLinkman}
+          onCancel={this.modiAlarmCancel}
+          title={`正在编辑${selectedAlarmLinkman.userName}`}
+          onOk={this.modiAlarmOk}
+        >
+          <ModifyAlarmLinkman
+            data={selectedAlarmLinkman}
+            ref={c => {
+              this.modifyAlarmForm = c;
+            }}
           />
         </Modal>
       </PageHeaderLayout>

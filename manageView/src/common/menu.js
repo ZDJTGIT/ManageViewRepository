@@ -63,8 +63,8 @@ const menuData = [
     path: 'app',
     children: [
       {
-        name: '图片上传',
-        path: 'upload-picture',
+        name: '手机轮播图上传',
+        path: 'uploadPhonePicture',
       },
     ],
   },

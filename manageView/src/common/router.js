@@ -112,7 +112,7 @@ export const getRouterData = app => {
     '/updata/upfirst-data': {
       component: dynamicWrapper(app, [], () => import('../routes/UpData/UpFirstData')),
     },
-    '/app/upload-picture': {
+    '/app/uploadPhonePicture': {
       component: dynamicWrapper(app, [], () => import('../routes/App/UploadPicture')),
     },
     '/user': {

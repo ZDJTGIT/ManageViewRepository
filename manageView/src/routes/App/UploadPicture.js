@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Upload, Icon, Modal, message, Button, Row, Col, Input, Card } from 'antd';
 import axios from 'axios';
 import { isNull } from 'util';
-import PageHeaderLayout from '../../layouts/PageHeaderLayout.js';
+import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import '../Config';
 
 const { TextArea } = Input;
@@ -102,7 +102,11 @@ export default class UploadPicture extends Component {
     const { previewVisible, previewImage, fileList, description, priority } = this.state;
 
     return (
-      <PageHeaderLayout title="手机图片上传">
+      <PageHeaderLayout
+        title="手机轮播图上传"
+        content="该作者前端技术有限，暂时只能实现上传，
+        上传后无法进行修改，请再三确认后再上传！！！界面丑陋，请多包涵！"
+      >
         <Card>
           <Row gutter={1}>
             <Col span={10}>
@@ -133,7 +137,7 @@ export default class UploadPicture extends Component {
                 return (
                   <div style={{ marginTop: '8px', height: '66px' }} id={v.uid}>
                     <TextArea
-                      style={{ height: '66px', width: '40%' }}
+                      style={{ height: '66px', width: '45%', marginLeft: '5%' }}
                       placeholder="图片描述"
                       id={1 + v.uid}
                       value={description.get(v.uid)}
@@ -142,7 +146,7 @@ export default class UploadPicture extends Component {
                     <Input
                       type="number"
                       placeholder="图片优先级"
-                      style={{ width: '30%' }}
+                      style={{ width: '22%', height: 66, marginLeft: '2%' }}
                       id={2 + v.uid}
                       onChange={e => this.changePriority(e, v)}
                       value={priority.get(v.uid)}
@@ -150,15 +154,19 @@ export default class UploadPicture extends Component {
                   </div>
                 );
               })}
-              <Button
-                className="upload-demo-start"
-                type="primary"
-                onClick={this.handleUpload}
-                disabled={fileList.length === 0}
-                style={{ marginTop: '2vh', marginLeft: '62%' }}
+              <Col
+                span={fileList.length === 0 ? 0 : 8}
+                style={{ marginTop: '2vh', marginLeft: '60%' }}
               >
-                上传
-              </Button>
+                <Button
+                  className="upload-demo-start"
+                  type="primary"
+                  onClick={this.handleUpload}
+                  disabled={fileList.length === 0}
+                >
+                  上传
+                </Button>
+              </Col>
             </Col>
             <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel} width={888}>
               <img alt="example" style={{ width: '100%' }} src={previewImage} />

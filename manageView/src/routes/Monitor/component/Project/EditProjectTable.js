@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { Table, Form, message, Divider, Modal, Tabs, Icon, Badge } from 'antd';
 import axios from 'axios';
-import SensorEditableTable from './sensor/SensorEditTable.js';
-import AddSensorTable from './sensor/AddSensorTable.js';
-import EditableForm from './EditProjectForm.js';
-import SensorEditTableFor1 from './sensor/SensorEditTableFor1-N.js';
+import SensorEditableTable from './sensor/SensorEditTable';
+import AddSensorTable from './sensor/AddSensorTable';
+import EditableForm from './EditProjectForm';
+import SensorEditTableFor1 from './sensor/SensorEditTableFor1-N';
+import ProjectPicture from './uploadPicture/ProjectPicture';
 import '../../../Config';
 
 const { TabPane } = Tabs;
@@ -280,6 +281,9 @@ export default class EditableTable extends Component {
       <span>
         <Icon type="global" />测斜传感器信息
       </span>,
+      <span>
+        <Icon type="upload" />上传项目图片
+      </span>,
     ];
 
     const { currentProjectId, currentProjectName, editingKey, editingProject } = this.state;
@@ -318,6 +322,9 @@ export default class EditableTable extends Component {
             </TabPane>
             <TabPane tab={tabContent[1]} key="2">
               <AddSensorTableImp projectId={currentProjectId} refresh={this.showSensorModal1} />
+            </TabPane>
+            <TabPane tab={tabContent[3]} key="4">
+              <ProjectPicture />
             </TabPane>
           </Tabs>
         </Modal>

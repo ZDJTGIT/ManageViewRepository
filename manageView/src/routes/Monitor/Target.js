@@ -157,6 +157,13 @@ export default class Target extends Component {
         title: '相关表名',
         dataIndex: 'tableName',
         key: 'tableName',
+        render: text => {
+          if (text === null || text === '') {
+            return <span>暂无数据库表！</span>;
+          } else {
+            return <span>{text}</span>;
+          }
+        },
       },
       {
         title: '操作',
