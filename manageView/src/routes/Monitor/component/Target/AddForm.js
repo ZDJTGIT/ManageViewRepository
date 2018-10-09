@@ -29,7 +29,7 @@ export default class AddForm extends Component {
           {getFieldDecorator('tableName', {
             rules: [{ required: false, message: 'please select tableName' }],
           })(
-            <Select placeholder="请选择项目类型" id="addTableName" showSearch>
+            <Select placeholder="请选择数据表名" id="addTableName" showSearch>
               {dataTableName.map(v => {
                 return (
                   <Option key={v} value={v}>

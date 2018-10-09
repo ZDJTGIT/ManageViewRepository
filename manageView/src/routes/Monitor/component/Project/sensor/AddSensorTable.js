@@ -280,7 +280,7 @@ export default class AddSensorTable extends Component {
     const regu1 = '^[ ]+$';
     const reg1 = new RegExp(regu1);
     if (value != null && value !== '' && !reg1.test(value)) {
-      const regu2 = '^(\\-|\\+)?([0-8]?\\d{1}\\.\\d{6,8}|90\\.0{6,8}|[0-8]?\\d{1}|90)$';
+      const regu2 = '^(\\-|\\+)?([0-8]?\\d{1}\\.\\d{6,10}|90\\.0{6,10}|[0-8]?\\d{1}|90)$';
       const reg2 = new RegExp(regu2);
       if (reg2.test(value)) {
         callback();
