@@ -57,17 +57,21 @@ const menuData = [
       },
     ],
   },
-  {
-    name: '手机App',
-    icon: 'android',
-    path: 'app',
-    children: [
-      {
-        name: '手机轮播图上传',
-        path: 'uploadPhonePicture',
-      },
-    ],
-  },
+  // {
+  //   name: '手机App',
+  //   icon: 'android',
+  //   path: 'app',
+  //   children: [
+  //     {
+  //       name: '手机轮播图上传',
+  //       path: 'uploadPhonePicture',
+  //     },
+  //     {
+  //       name: '测试专用',
+  //       path: 'test',
+  //     },
+  //   ],
+  // },
   // {
   //   name: '账户',
   //   icon: 'user',

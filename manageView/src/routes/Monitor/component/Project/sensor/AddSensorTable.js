@@ -10,6 +10,7 @@ export default class AddSensorTable extends Component {
     super(props);
     this.state = {
       monitorPointOption: [],
+      isGra: false,
     };
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleReset = this.handleReset.bind(this);
@@ -57,10 +58,18 @@ export default class AddSensorTable extends Component {
       if (!err) {
         if (value.monitorType === 'gra') {
           delete value.monitorType;
+          value.sensorDepthStr = value.sensorDepth;
+          delete value.sensorDepth;
+          value.sensorNumberStr = value.sensorNumber;
+          delete value.sensorNumber;
           setTimeout(() => {
             axios
               .post(`http://${global.constants.onlineWeb}/managerProject/insertGraSensor`, value, {
                 headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+                params: {
+                  sensorDepthStr: value.sensorDepthStr,
+                  sensorNumberStr: value.sensorNumberStr,
+                },
               })
               .then(() => {
                 message.success('新增传感器成功');
@@ -91,6 +100,42 @@ export default class AddSensorTable extends Component {
         }
       }
     });
+  };
+
+  // 检查传感器深度
+  checksensorDepth = (rule, value, callback) => {
+    const { isGra } = this.state;
+    const regu1 = '^[ ]+$';
+    const reg1 = new RegExp(regu1);
+    if (isGra) {
+      if (value != null && value !== '' && !reg1.test(value)) {
+        const regu2 = '^[0-9]+([.]{1}[0-9]+){0,1}(\\|([0-9]+([.]{1}[0-9]+){0,1}))*$';
+        const reg2 = new RegExp(regu2);
+        if (reg2.test(value)) {
+          const { form } = this.props;
+          if (
+            form.getFieldValue('sensorNumber') != null &&
+            typeof form.getFieldValue('sensorNumber') !== 'undefined'
+          ) {
+            const numberLength = form.getFieldValue('sensorNumber').split('|').length - 1;
+            const length = value.split('|').length - 1;
+            if (numberLength !== length) {
+              callback('传感器编号应与传感器深度对应');
+            } else {
+              callback();
+            }
+          } else {
+            callback('传感器编号应与传感器深度对应');
+          }
+        } else {
+          callback('传感器深度只能为整数或者小数');
+        }
+      } else {
+        callback('传感器深度不能为空');
+      }
+    } else {
+      callback();
+    }
   };
 
   // 检查测点名称
@@ -150,19 +195,44 @@ export default class AddSensorTable extends Component {
 
   // 检查传感器编号
   checksensorNumber(rule, value, callback) {
-    const regu1 = '^[ ]+$';
-    const reg1 = new RegExp(regu1);
-    if (value != null && value !== '' && !reg1.test(value)) {
-      const regu2 = '^[0-9a-fA-F]{2}$';
-      const reg2 = new RegExp(regu2);
-      if (reg2.test(value)) {
-        callback();
-      } else {
-        callback('传感器编号应为十六进制数');
-      }
-    } else {
-      callback('传感器编号不能为空');
-    }
+    // const { isGra } = this.state;
+    // const regu1 = '^[ ]+$';
+    // const reg1 = new RegExp(regu1);
+    // if (value != null && value !== '' && !reg1.test(value)) {
+    //   // 非测斜检测
+    //   if(!isGra){
+    //     const regu2 = '^[0-9a-fA-F]{2}$';
+    //     const reg2 = new RegExp(regu2);
+    //     if (reg2.test(value)) {
+    //       callback();
+    //     } else {
+    //       callback('传感器编号应为两位十六进制数');
+    //     }
+    //   }else{
+    //     // 测斜检测
+    //     const { form } = this.props;
+    //     const regu2 = '^[0-9a-fA-F]{2}(\\|[0-9a-fA-F]{2})*$';
+    //     const reg2 = new RegExp(regu2);
+    //     if (reg2.test(value)) {
+    //       if(form.getFieldValue('sensorDepth')!=null&& typeof(form.getFieldValue('sensorDepth'))!=='undefined'){
+    //         const depthLength = form.getFieldValue('sensorDepth').split('|').length-1;
+    //         const length = value.split('|').length-1;
+    //         if(depthLength!==length){
+    //           callback('传感器编号应与传感器深度对应');
+    //         }else{
+    //           callback();
+    //         }
+    //       }else{
+    //         callback('传感器编号应与传感器深度对应');
+    //       }
+    //     } else {
+    //       callback('测斜传感器编号应为两位十六进制数以|符号隔开');
+    //     }
+    //   }
+    // } else {
+    //   callback('传感器编号不能为空');
+    // }
+    callback();
   }
 
   // 检查传感器类型
@@ -224,7 +294,7 @@ export default class AddSensorTable extends Component {
 
   render() {
     const { form } = this.props;
-    const { monitorPointOption } = this.state;
+    const { monitorPointOption, isGra } = this.state;
     const { getFieldDecorator } = form;
     const formItemLayout = {
       labelCol: { span: 6 },
@@ -253,7 +323,11 @@ export default class AddSensorTable extends Component {
               { validator: this.checkmonitorType },
             ],
           })(
-            <Select>
+            <Select
+              onChange={value => {
+                this.setState({ isGra: value === 'gra' });
+              }}
+            >
               <Option key="gra" value="gra">
                 测斜
               </Option>
@@ -301,6 +375,7 @@ export default class AddSensorTable extends Component {
               { required: true, message: '请输入传感器编号' },
               { validator: this.checksensorNumber },
             ],
+            validateTrigger: 'onSubmit',
           })(
             <Input
               type="text"
@@ -378,7 +453,11 @@ export default class AddSensorTable extends Component {
         </FormItem>
         <FormItem hasFeedback label="传感器深度:" {...formItemLayout}>
           {getFieldDecorator('sensorDepth', {
-            rules: [],
+            rules: [
+              { required: isGra, message: '请输入传感器纬度' },
+              { validator: this.checksensorDepth },
+            ],
+            validateTrigger: 'onSubmit',
           })(
             <Input
               type="text"

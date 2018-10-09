@@ -5,7 +5,8 @@ import SensorEditableTable from './sensor/SensorEditTable';
 import AddSensorTable from './sensor/AddSensorTable';
 import EditableForm from './EditProjectForm';
 import SensorEditTableFor1 from './sensor/SensorEditTableFor1-N';
-import ProjectPicture from './uploadPicture/ProjectPicture';
+// import ProjectPicture from './uploadPicture/ProjectPicture';
+import AndroidUpload from './uploadPicture/AndroidUpload';
 import '../../../Config';
 
 const { TabPane } = Tabs;
@@ -284,6 +285,9 @@ export default class EditableTable extends Component {
       <span>
         <Icon type="upload" />上传项目图片
       </span>,
+      <span>
+        <Icon type="upload" />Android图片
+      </span>,
     ];
 
     const { currentProjectId, currentProjectName, editingKey, editingProject } = this.state;
@@ -305,7 +309,7 @@ export default class EditableTable extends Component {
           // onOk={this.addProjectOk}
           footer={null}
           onCancel={this.showSensorModalCancel}
-          width={1024}
+          width={1150}
         >
           <Tabs>
             <TabPane tab={tabContent[0]} key="1">
@@ -323,8 +327,13 @@ export default class EditableTable extends Component {
             <TabPane tab={tabContent[1]} key="2">
               <AddSensorTableImp projectId={currentProjectId} refresh={this.showSensorModal1} />
             </TabPane>
-            <TabPane tab={tabContent[3]} key="4">
-              <ProjectPicture />
+            <TabPane tab={tabContent[4]} key="5">
+              {/* <ProjectPicture projectId={currentProjectId} /> */}
+              <AndroidUpload projectId={currentProjectId} />
+            </TabPane>
+            <TabPane tab={tabContent[3]} key="4" style={{ textAlign: 'center' }}>
+              {/* <ProjectPicture projectId={currentProjectId} /> */}
+              <span>抱歉，暂停服务。。。</span>
             </TabPane>
           </Tabs>
         </Modal>
