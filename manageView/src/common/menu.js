@@ -72,6 +72,28 @@ const menuData = [
   //     },
   //   ],
   // },
+  {
+    name: '手机App',
+    icon: 'android',
+    path: 'app',
+    children: [
+      {
+        name: '手机轮播图上传',
+        path: 'uploadPhonePicture',
+      },
+    ],
+  },
+  {
+    name: '终端绑定',
+    icon: 'api',
+    path: 'binding',
+    children: [
+      {
+        name: '珠海终端绑定',
+        path: 'zhuhaibinding',
+      },
+    ],
+  },
   // {
   //   name: '账户',
   //   icon: 'user',

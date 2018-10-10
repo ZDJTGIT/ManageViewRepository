@@ -5,6 +5,9 @@ export function fixedZero(val) {
   return val * 1 < 10 ? `0${val}` : val;
 }
 
+// export const dtuhttp = "http://123.207.39.209:8090/";
+export const dtuhttp = "http://10.88.89.170:8095/";
+
 export function getNowFormatDate(time) {
   const date = new Date(time);
   const year = date.getFullYear();
