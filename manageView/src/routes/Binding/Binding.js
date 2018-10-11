@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import {
   Card,
   Form,
@@ -7,9 +7,12 @@ import {
   Button,
   Input,
   Select,
+  Timeline,
 } from 'antd';
 import axios from 'axios';
-import { dtuhttp } from '../../utils/utils';
+import SockJs from 'sockjs-client';
+import Stomp from 'stompjs';
+import { dtuhttp,wstcp } from '../../utils/utils';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './binding.less';
 
@@ -19,28 +22,72 @@ const fieldLabels = {
   name2: '终端编号',
   url2: '通道',
   owner2: 'Modbus地址',
-  approver2: '传感器编号',
+  approver2: 'Modbus地址(传感器编号)',
   dateRange2: '地址长度',
   type2: '传感器选择',
 };
 
 @Form.create()
-export default class AdvancedForm extends PureComponent {
+export default class AdvancedForm extends Component {
 
   state = {
     zhongduan: [],
     sensorbinding:[],
     length:0,
+    serverinfo:[],
+    // msg:'',
   };
 
   componentDidMount() {
     window.addEventListener('resize', this.resizeFooterToolbar);
     this.zhongduanAxios();
     this.sensorBinding();
+    this.mywebsocket();
   }
 
   componentWillUnmount() {
     window.removeEventListener('resize', this.resizeFooterToolbar);
+  }
+
+  mywebsocket = ()=> {
+    const socket = new SockJs(`${wstcp}webSocket`);
+
+    /**
+     * 建立成功的回调函数
+     */
+    socket.onopen = ()=> {
+      console.log('open a connection');
+    };
+
+    /**
+     * 服务器有消息返回的回调函数
+     */
+    socket.onmessage = (e)=> {
+      console.log('message', e.data);
+    };
+
+    /**
+     * websocket链接关闭的回调函数
+     */
+    socket.onclose = ()=> {
+      console.log('close');
+    };
+
+    const stompClient = Stomp.over(socket);
+    const info=[];
+    let index=0;
+    stompClient.connect({}, ()=> {
+        stompClient.subscribe(`/topic/notice`,  (data)=> {
+          this.info(info,index+=1,data);
+        });
+    });
+  }
+
+  info = (info,index,data)=> {
+    info.push(<Timeline.Item key={index}>{(new Date()).toLocaleDateString()} {(new Date()).toLocaleTimeString()}：{data.body}</Timeline.Item>);
+    this.setState({
+      serverinfo:info,
+    })
   }
 
   zhongduanAxios = ()=> {
@@ -135,8 +182,7 @@ export default class AdvancedForm extends PureComponent {
   render() {
     const { form } = this.props;
     const { getFieldDecorator } = form;
-    const { length } =this.state;
-
+    const { length,serverinfo } =this.state;
     return (
       <PageHeaderLayout
         title="终端绑定"
@@ -151,7 +197,7 @@ export default class AdvancedForm extends PureComponent {
                   {getFieldDecorator('smucmsid', {
                     rules: [{ required: true, message: '请选择终端' }],
                   })(
-                    <Select showSearch placeholder="请选择终端" optionFilterProp="children" filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}>
+                    <Select showSearch placeholder="输入关键字可搜索">
                       { this.zhongduan() }
                     </Select>
                   )}
@@ -176,51 +222,45 @@ export default class AdvancedForm extends PureComponent {
                   )}
                 </Form.Item>
               </Col>
-              <Col xl={{ span: 8, offset: 2 }} lg={{ span: 10 }} md={{ span: 24 }} sm={24}>
-                <Form.Item label={fieldLabels.owner2}>
-                  {getFieldDecorator('modbus', {
-                    rules: [{ required: true, message: '请选择Modbus地址' }],
-                  })(
-                    <Select placeholder="请选Modbus地址">
-                      {this.modbus()}
-                    </Select>
-                  )}
-                </Form.Item>
-              </Col>
-            </Row>
-            <Row gutter={16}>
-              <Col lg={6} md={12} sm={24}>
+              <Col xl={{ span: 6, offset: 2 }} lg={{ span: 8 }} md={{ span: 12 }} sm={24}>
                 <Form.Item label={fieldLabels.approver2}>
                   {getFieldDecorator('sensornumber', {
                     rules: [{ required: true, message: '请输入' }],
                   })(<Input placeholder="请输入" onChange={this.sensornumber.bind()} />)}
                 </Form.Item>
               </Col>
-              <Col xl={{ span: 6, offset: 2 }} lg={{ span: 8 }} md={{ span: 12 }} sm={24}>
+            </Row>
+            <Row gutter={16}>
+              <Col lg={6} md={12} sm={24}>
                 <Form.Item label={fieldLabels.dateRange2}>
                   {getFieldDecorator('length',{initialValue:length})(<Input disabled />)}
                 </Form.Item>
               </Col>
-              <Col xl={{ span: 8, offset: 2 }} lg={{ span: 10 }} md={{ span: 24 }} sm={24}>
+              <Col xl={{ span: 6, offset: 2 }} lg={{ span: 8 }} md={{ span: 12 }} sm={24}>
                 <Form.Item label={fieldLabels.type2}>
                   {getFieldDecorator('sensortype', {
                     rules: [{ required: true, message: '请选择绑定传感器类型' }],
                   })(
-                    <Select placeholder="请选择绑定传感器类型">
+                    <Select placeholder="输入关键字可搜索" showSearch optionFilterProp="children">
                       {this.sensorType()}
                     </Select>
                   )}
                 </Form.Item>
               </Col>
+              <Col xl={{ span: 6, offset: 2 }} lg={{ span: 8 }} md={{ span: 12 }} sm={24} style={{marginTop:'40px'}}>
+                <Form.Item>
+                  <Button type="primary" htmlType="submit">
+                    绑定
+                  </Button>
+                </Form.Item>
+              </Col>
             </Row>
-            <Col xl={{ span: 6, offset: 20 }} lg={{ span: 8 }} md={{ span: 12 }} sm={24}>
-              <Form.Item>
-                <Button type="primary" htmlType="submit">
-                  绑定
-                </Button>
-              </Form.Item>
-            </Col>
           </Form>
+        </Card>
+        <Card title="消息接收" className={styles.card} bordered={false}>
+          <Timeline>
+            {serverinfo}
+          </Timeline>
         </Card>
       </PageHeaderLayout>
     );

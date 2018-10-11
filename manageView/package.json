@@ -49,6 +49,8 @@
     "react-fittext": "^1.0.0",
     "rollbar": "^2.3.4",
     "setprototypeof": "^1.1.0",
+    "sockjs-client": "^1.3.0",
+    "stompjs": "^2.3.3",
     "transform-runtime": "0.0.0",
     "url-polyfill": "^1.0.10",
     "uuid": "^3.3.2"
