@@ -61,7 +61,7 @@ export async function queryFakeList(params) {
 }
 
 export async function fakeAccountLogin(params) {
-  return request('/api/login/account', {
+  return request('http://123.207.88.210:8090/user/login', {
     method: 'POST',
     body: params,
   });

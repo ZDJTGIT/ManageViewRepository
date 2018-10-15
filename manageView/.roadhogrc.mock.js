@@ -9,7 +9,6 @@ import { format, delay } from 'roadhog-api-doc';
 
 // 是否禁用代理
 const noProxy = process.env.NO_PROXY === 'true';
-
 // 代码中会兼容本地 service mock 以及部署站点的静态数据
 const proxy = {
   // 支持值为 Object 和 Array
@@ -22,7 +21,7 @@ const proxy = {
       },
     },
     $body: {
-      name: 'Serati Ma',
+      name: 'Admin',
       avatar: 'https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png',
       userid: '00000001',
       notifyCount: 12,
@@ -73,19 +72,11 @@ const proxy = {
   'GET /api/profile/advanced': getProfileAdvancedData,
   'POST /api/login/account': (req, res) => {
     const { password, userName, type } = req.body;
-    if (password === '888888' && userName === 'admin') {
+    if (password === 'hnzdjc' && userName === 'admin') {
       res.send({
         status: 'ok',
         type,
         currentAuthority: 'admin',
-      });
-      return;
-    }
-    if (password === '123456' && userName === 'user') {
-      res.send({
-        status: 'ok',
-        type,
-        currentAuthority: 'user',
       });
       return;
     }

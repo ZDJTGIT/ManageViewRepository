@@ -72,17 +72,17 @@ const menuData = [
   //     },
   //   ],
   // },
-  {
-    name: '手机App',
-    icon: 'android',
-    path: 'app',
-    children: [
-      {
-        name: '手机轮播图上传',
-        path: 'uploadPhonePicture',
-      },
-    ],
-  },
+  // {
+  //   name: '手机App',
+  //   icon: 'android',
+  //   path: 'app',
+  //   children: [
+  //     {
+  //       name: '手机轮播图上传',
+  //       path: 'uploadPhonePicture',
+  //     },
+  //   ],
+  // },
   {
     name: '终端绑定',
     icon: 'api',

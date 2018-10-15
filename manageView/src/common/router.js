@@ -118,9 +118,9 @@ export const getRouterData = app => {
     // '/app/test': {
     //   component: dynamicWrapper(app, [], () => import('../routes/App/Test')),
     // },
-    '/app/uploadPhonePicture': {
-      component: dynamicWrapper(app, [], () => import('../routes/App/UploadPicture')),
-    },
+    // '/app/uploadPhonePicture': {
+    //   component: dynamicWrapper(app, [], () => import('../routes/App/UploadPicture')),
+    // },
     '/binding/zhuhaibinding': {
       component: dynamicWrapper(app, [], () => import('../routes/Binding/Binding')),
     },
