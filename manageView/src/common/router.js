@@ -124,6 +124,9 @@ export const getRouterData = app => {
     '/binding/zhuhaibinding': {
       component: dynamicWrapper(app, [], () => import('../routes/Binding/Binding')),
     },
+    '/upload/imageupload': {
+      component: dynamicWrapper(app, [], () => import('../routes/upload/ImageUpload')),
+    },
     '/user': {
       component: dynamicWrapper(app, [], () => import('../layouts/UserLayout')),
     },

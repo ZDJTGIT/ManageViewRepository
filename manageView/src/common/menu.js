@@ -95,6 +95,17 @@ const menuData = [
     ],
   },
   // {
+  //   name: '资源上传',
+  //   icon: 'upload',
+  //   path: 'upload',
+  //   children: [
+  //     {
+  //       name: '图片上传',
+  //       path: 'imageupload',
+  //     },
+  //   ],
+  // },
+  // {
   //   name: '账户',
   //   icon: 'user',
   //   path: 'user',

@@ -3,7 +3,7 @@ import { connect } from 'dva';
 import axios from 'axios';
 import { Form, Input, DatePicker, Select, Button, Card, message } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-import { getNowFormatDate } from '../../utils/utils';
+import { getNowFormatDate,serverhttp } from '../../utils/utils';
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -44,7 +44,7 @@ export default class UpFirstData extends PureComponent {
 
   monitorTypeTableName = () => {
     axios
-      .get('http://123.207.39.209:8090/monitortype/tableName')
+      .get(`${serverhttp}monitortype/tableName`)
       .then(res => {
         this.setState({
           monitorTTN: res.data.data,
@@ -58,7 +58,7 @@ export default class UpFirstData extends PureComponent {
 
   updataFistDataAxios = value => {
     axios
-      .get('http://123.207.39.209:8090/data/updateFirstData', {
+      .get(`${serverhttp}data/updateFirstData`, {
         params: value,
       })
       .then(res => {

@@ -16,7 +16,7 @@ import MyTable from 'components/MoniTable';
 import { Link } from 'dva/router';
 import Exception from 'components/Exception';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-import { getNowFormatDate } from '../../utils/utils';
+import { getNowFormatDate,serverhttp } from '../../utils/utils';
 
 import styles from './MoniData.less';
 
@@ -52,7 +52,7 @@ export default class MoniData extends PureComponent {
 
   monitorTypeTableName = () => {
     axios
-      .get('http://123.207.39.209:8090/monitortype/tableName')
+      .get(`${serverhttp}monitortype/tableName`)
       .then(res => {
         this.setState({
           monitorTTN: res.data.data,
@@ -109,7 +109,7 @@ export default class MoniData extends PureComponent {
       loadings: true,
     });
     axios
-      .get('http://123.207.39.209:8090/data/queryData', {
+      .get(`${serverhttp}data/queryData`, {
         params: conditioins,
       })
       .then(res => {
@@ -146,7 +146,7 @@ export default class MoniData extends PureComponent {
       loadings: true,
     });
     axios
-      .get('http://123.207.39.209:8090/data/queryData', {
+      .get(`${serverhttp}data/queryData`, {
         params: {
           beginTime: fieldsValue.beginTime,
           endTime: fieldsValue.endTime,
