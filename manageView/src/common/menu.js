@@ -1,17 +1,17 @@
 import { isUrl } from '../utils/utils';
 
 const menuData = [
-  {
-    name: 'dashboard',
-    icon: 'dashboard',
-    path: 'dashboard',
-    children: [
-      {
-        name: '分析页',
-        path: 'analysis',
-      },
-    ],
-  },
+  // {
+  //   name: 'dashboard',
+  //   icon: 'dashboard',
+  //   path: 'dashboard',
+  //   children: [
+  //     {
+  //       name: '分析页',
+  //       path: 'analysis',
+  //     },
+  //   ],
+  // },
   {
     name: '自动监测',
     icon: 'area-chart',

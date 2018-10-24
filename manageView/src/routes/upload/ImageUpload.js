@@ -7,6 +7,7 @@ Card,
 } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './ImageUpload.less';
+import { testhttp } from '../../utils/utils';
 
 export default class PicturesWall extends Component {
   state = {
@@ -29,6 +30,11 @@ export default class PicturesWall extends Component {
     });
   }
 
+  beforeUpload = (file)=> {
+    console.log(file.size);
+    return false;
+  }
+
   handleChange = ({ fileList }) => this.setState({ fileList })
 
   render() {
@@ -39,7 +45,10 @@ export default class PicturesWall extends Component {
         <div className="ant-upload-text">上传图片</div>
       </div>
     );
+    const http = `${testhttp}file/imageupload`;
     return (
+
+
       <PageHeaderLayout
         title="资源上传"
         content="资源文件上传"
@@ -48,11 +57,13 @@ export default class PicturesWall extends Component {
         <Card title="图片上传" className={styles.card} bordered={false}>
           <div className="clearfix">
             <Upload
-              action="http://localhost:8090/file/imageupload"
-              listType="picture-card"
+              action={http}
+              listType="picture"
               fileList={fileList}
               onPreview={this.handlePreview}
               onChange={this.handleChange}
+              multiple
+              beforeUpload={this.beforeUpload}
             >
               {fileList.length >= 4 ? null : uploadButton}
             </Upload>

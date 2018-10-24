@@ -78,16 +78,26 @@ export default class AdvancedForm extends Component {
     let index=0;
     stompClient.connect({}, ()=> {
         stompClient.subscribe(`/topic/notice`,  (data)=> {
-          this.info(info,index+=1,data);
+          this.info(info,index+=1,data,1);
+        });
+        stompClient.subscribe(`/topic/sensor`,  (data)=> {
+          this.info(info,index+=1,data,2);
         });
     });
   }
 
-  info = (info,index,data)=> {
-    info.push(<Timeline.Item key={index}>{(new Date()).toLocaleDateString()} {(new Date()).toLocaleTimeString()}：{data.body}</Timeline.Item>);
-    this.setState({
-      serverinfo:info,
-    })
+  info = (info,index,data,type)=> {
+    if(type===1){
+      info.push(<Timeline.Item key={index}>{(new Date()).toLocaleDateString()} {(new Date()).toLocaleTimeString()}：{data.body}</Timeline.Item>);
+      this.setState({
+        serverinfo:info,
+      })
+    }else if(type===2){
+      info.push(<Timeline.Item color="red" key={index}>{(new Date()).toLocaleDateString()} {(new Date()).toLocaleTimeString()}：{data.body}</Timeline.Item>);
+      this.setState({
+        serverinfo:info,
+      })
+    }
   }
 
   zhongduanAxios = ()=> {
