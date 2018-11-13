@@ -35,7 +35,12 @@ export default {
     saveCurrentUser(state, action) {
       return {
         ...state,
-        currentUser: action.payload || {},
+        currentUser: action.payload || {
+            name: 'Admin',
+            avatar: 'https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png',
+            userid: '00000001',
+            notifyCount: 12,
+        },
       };
     },
     changeNotifyCount(state, action) {

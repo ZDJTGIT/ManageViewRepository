@@ -12,29 +12,29 @@ const menuData = [
   //     },
   //   ],
   // },
-  {
-    name: '自动监测',
-    icon: 'area-chart',
-    path: 'monitor',
-    children: [
-      {
-        name: '项目管理',
-        path: 'project',
-      },
-      {
-        name: '用户管理',
-        path: 'user',
-      },
-      {
-        name: '指标管理',
-        path: 'target',
-      },
-      {
-        name: '项目用户关系模块',
-        path: 'pro-user',
-      },
-    ],
-  },
+  // {
+  //   name: '自动监测',
+  //   icon: 'area-chart',
+  //   path: 'monitor',
+  //   children: [
+  //     {
+  //       name: '项目管理',
+  //       path: 'project',
+  //     },
+  //     {
+  //       name: '用户管理',
+  //       path: 'user',
+  //     },
+  //     {
+  //       name: '指标管理',
+  //       path: 'target',
+  //     },
+  //     {
+  //       name: '项目用户关系模块',
+  //       path: 'pro-user',
+  //     },
+  //   ],
+  // },
   {
     name: '数据查询',
     icon: 'hdd',
