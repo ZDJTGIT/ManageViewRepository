@@ -1,9 +1,9 @@
 import { routerRedux } from 'dva/router';
 import { stringify } from 'qs';
-import { fakeAccountLogin } from '../services/api';
-import { setAuthority } from '../utils/authority';
-import { reloadAuthorized } from '../utils/Authorized';
-import { getPageQuery } from '../utils/utils';
+import { fakeAccountLogin, getFakeCaptcha } from '@/services/api';
+import { setAuthority } from '@/utils/authority';
+import { getPageQuery } from '@/utils/utils';
+import { reloadAuthorized } from '@/utils/Authorized';
 
 export default {
   namespace: 'login',
@@ -15,12 +15,17 @@ export default {
   effects: {
     *login({ payload }, { call, put }) {
       const response = yield call(fakeAccountLogin, payload);
+      // const response = await fakeAccountLogin(payload);
+      
       yield put({
         type: 'changeLoginStatus',
         payload: response,
       });
+      
       // Login successfully
       if (response.data.status === 'ok') {
+        console.log(11)
+        localStorage.setItem('token',response.data.token);
         reloadAuthorized();
         const urlParams = new URL(window.location.href);
         const params = getPageQuery();
@@ -40,14 +45,22 @@ export default {
         yield put(routerRedux.replace(redirect || '/'));
       }
     },
+
+    *getCaptcha({ payload }, { call }) {
+      yield call(getFakeCaptcha, payload);
+    },
+
     *logout(_, { put }) {
       yield put({
         type: 'changeLoginStatus',
         payload: {
-          status: false,
-          currentAuthority: 'guest',
+          data:{
+            status: false,
+            currentAuthority: '',
+          }
         },
       });
+      localStorage.setItem('token','');
       reloadAuthorized();
       yield put(
         routerRedux.push({
@@ -65,6 +78,7 @@ export default {
       setAuthority(payload.data.currentAuthority);
       return {
         ...state,
+        
         status: payload.data.status,
         type: payload.data.type,
       };

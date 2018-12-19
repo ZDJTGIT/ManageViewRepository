@@ -94,18 +94,18 @@ export const getRouterData = app => {
         import('../routes/Exception/triggerException')
       ),
     },
-    // '/monitor/project': {
-    //   component: dynamicWrapper(app, ['monitor'], () => import('../routes/Monitor/Project')),
-    // },
-    // '/monitor/user': {
-    //   component: dynamicWrapper(app, ['monitor'], () => import('../routes/Monitor/User')),
-    // },
-    // '/monitor/target': {
-    //   component: dynamicWrapper(app, ['monitor'], () => import('../routes/Monitor/Target')),
-    // },
-    // '/monitor/pro-user': {
-    //   component: dynamicWrapper(app, ['monitor'], () => import('../routes/Monitor/ProUser')),
-    // },
+    '/monitor/project': {
+      component: dynamicWrapper(app, ['monitor'], () => import('../routes/Monitor/Project')),
+    },
+    '/monitor/user': {
+      component: dynamicWrapper(app, ['monitor'], () => import('../routes/Monitor/User')),
+    },
+    '/monitor/target': {
+      component: dynamicWrapper(app, ['monitor'], () => import('../routes/Monitor/Target')),
+    },
+    '/monitor/pro-user': {
+      component: dynamicWrapper(app, ['monitor'], () => import('../routes/Monitor/ProUser')),
+    },
     '/mydata/moni-data': {
       component: dynamicWrapper(app, [], () => import('../routes/QueryData/MoniData')),
     },

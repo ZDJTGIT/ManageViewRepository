@@ -30,6 +30,7 @@ export default class SensorEditableTableFor1 extends Component {
         .then(() => {
           message.success('修改项目成功');
           this.setState({ editingKey: '', editingSensor: '' });
+          this.edit.resetFields();
           refresh();
         })
         .catch(() => {

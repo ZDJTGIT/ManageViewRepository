@@ -1,4 +1,4 @@
-import { query as queryUsers, queryCurrent } from '../services/user';
+import { query as queryUsers, queryCurrent } from '@/services/user';
 
 export default {
   namespace: 'user',
@@ -35,12 +35,7 @@ export default {
     saveCurrentUser(state, action) {
       return {
         ...state,
-        currentUser: action.payload || {
-            name: 'Admin',
-            avatar: 'https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png',
-            userid: '00000001',
-            notifyCount: 12,
-        },
+        currentUser: action.payload.data || {},
       };
     },
     changeNotifyCount(state, action) {
