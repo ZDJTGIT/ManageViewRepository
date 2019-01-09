@@ -94,6 +94,17 @@ const menuData = [
       },
     ],
   },
+  {
+    name: '图片设置',
+    icon: 'picture',
+    path: 'imagesetting',
+    children: [
+      {
+        name: '布点图点位设置',
+        path: 'pointmap',
+      },
+    ],
+  },
   // {
   //   name: '资源上传',
   //   icon: 'upload',
