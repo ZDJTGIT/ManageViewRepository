@@ -1,5 +1,5 @@
 import fetch from 'dva/fetch';
-import { notification,message } from 'antd';
+import { notification, message } from 'antd';
 import router from 'umi/router';
 import hash from 'hash.js';
 import { isAntdPro } from './utils';
@@ -24,7 +24,33 @@ const codeMessage = {
 };
 
 const checkStatus = response => {
- 
+  // 判断返回code码
+  if(response.status!=404&&response.status!=500){
+    const temp = response.clone();
+    const temp2 = temp.text();
+    temp2.then(_=>{
+      let a ;
+      a=JSON.parse(_);
+      if(a.code==null||a.code==undefined){
+        window.g_app._store.dispatch({
+          type: 'login/logout',
+        });
+        return;
+      }
+      if(a.code == 3){
+        router.push('/exception/403');
+        return;
+      }
+      if(a.code == 4){
+        alert("长时间未操作，请重新登陆")
+        router.push("/user/login");
+        // window.g_app._store.dispatch({
+        //   type: 'login/logout',
+        // });
+        return;
+      }
+    });
+  }
   if (response.status >= 200 && response.status < 300) {
     return response;
   }
@@ -85,15 +111,21 @@ export default function request(url, option) {
     credentials: 'omit',
   };
   const newOptions = { ...defaultOptions, ...options };
-    newOptions.headers = {
-      "Authorization" : localStorage.getItem('token')?localStorage.getItem('token'):'',
-      ...newOptions.headers,
-    }
+  newOptions.headers = {
+    "Authorization": localStorage.getItem('token') ? 'Bearer '+localStorage.getItem('token') : 'Bearer ',
+    ...newOptions.headers,
+  }
   if (
     newOptions.method === 'POST' ||
     newOptions.method === 'PUT' ||
     newOptions.method === 'DELETE'
   ) {
+    // const obj = newOptions.body;
+    // const param = new FormData();
+    // for (let item in newOptions.body) {
+    //   param.append(item, newOptions.body[item]);
+    // }
+    // newOptions.body = param;
     if (!(newOptions.body instanceof FormData)) {
       newOptions.headers = {
         Accept: 'application/json',
@@ -107,6 +139,7 @@ export default function request(url, option) {
         Accept: 'application/json',
         ...newOptions.headers,
       };
+      newOptions.body = JSON.stringify(newOptions.body);
     }
   }
 
@@ -131,6 +164,12 @@ export default function request(url, option) {
     .then(response => {
       // DELETE and 204 do not return data by default
       // using .json will report an error.
+      // response.text().then(_=>{console.log(_)});
+
+      // 获取新的token存入浏览器
+      if(response.headers.get('Authorization')!=null&&response.headers.get('Authorization')!==undefined){
+        localStorage.setItem("token",response.headers.get('Authorization'));
+      }
       if (newOptions.method === 'DELETE' || response.status === 204) {
         return response.text();
       }
@@ -162,8 +201,15 @@ export default function request(url, option) {
         router.push('/exception/404');
         return;
       }
-      if(status!== "SyntaxError"){
-        message.error('连接数据失败，请联系管理员或稍后再试！');
+      if (status === "TypeError") {
+        window.g_app._store.dispatch({
+          type: 'login/logout',
+        });
+        // router.push('/exception/403');
+        return;
       }
+      // if(status!== "SyntaxError"){
+      //   message.error('连接数据失败，请联系管理员或稍后再试！');
+      // }
     });
 }

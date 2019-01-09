@@ -118,13 +118,13 @@ export default class Show extends Component{
     };
     return (
       <div>
-        <Alert 
+        {/* <Alert 
           message="Tip：用户界面提示"
-          description="新建区间前请先确认用户或者角色已存在！"
+          description="此用户为3.0监测系统登陆用户"
           type="success"
           showIcon
           closable
-        />
+        /> */}
         <Button type="primary" icon="medicine-box" style={{marginTop:'1%',marginBottom:'1%'}} onClick={()=>{toAdd()}}>新建用户</Button>
         <Form layout="horizontal">
           <Row>

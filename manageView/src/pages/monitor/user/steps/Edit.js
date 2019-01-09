@@ -31,13 +31,14 @@ export default class Edit extends Component{
           payload: values,
           callback:v=>{
             if(v.code===100){
-              message.success(v.message);
+              message.success("修改用户成功！");
               dispatch({
                 type: 'monitorUser/getUser',
               });
+              form.resetFields();
               closeEdit();
             }else{
-              message.success(v.message);
+              message.error("修改用户失败，(* ￣︿￣)，请在稍后再试~");
             }
           }
         })

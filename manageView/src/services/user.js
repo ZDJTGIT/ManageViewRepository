@@ -6,11 +6,7 @@ export async function query() {
 }
 
 export async function queryCurrent() {
-  return request(`${global.constants.onlineWeb}/auth/currentUser`)
-    // method: 'GET',
-    // header: {
-    //   "token": localStorage.getItem('token'),
-    // }
+  return request(`${global.constants.onlineWeb}/user/getCurrentUser`)
   // });          
   // return request('/api/currentUser');
 }

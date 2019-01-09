@@ -10,9 +10,6 @@ const RadioGroup = Radio.Group;
 const { confirm } = Modal;
 
 @Form.create()
-@connect(({ monitorProject }) => ({
-  monitorProject,
-}))
 export default class Show extends Component{
   constructor(props){
     super(props);
@@ -59,7 +56,7 @@ export default class Show extends Component{
 
   render(){
     const { showEdit,editData } = this.state;
-    const { form,toAdd,projects } = this.props;
+    const { form } = this.props;
     const { getFieldDecorator } = form;
     const columns = [
     {
@@ -170,7 +167,7 @@ export default class Show extends Component{
           </Row>
         </Form>
         
-        <Table dataSource={projects} columns={columns} bordered/>
+        <Table dataSource={null} columns={columns} bordered/>
         <Drawer
           title={`正在编辑第${editData.projectId}号项目`}
           width={720}

@@ -68,7 +68,7 @@ export default class Add extends Component{
           <Col span={12} offset={6}>
             <Alert 
               message="Tip：用户界面提示"
-              description="新建区间前请先确认用户或者角色已存在！"
+              description="新建用户请避开用户重名！"
               type="warning"
               showIcon
               closable

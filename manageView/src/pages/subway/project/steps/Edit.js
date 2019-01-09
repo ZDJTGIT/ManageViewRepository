@@ -6,10 +6,7 @@ import moment from 'moment';
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 
-@Form.create()
-@connect(({ monitorProject }) => ({
-  monitorProject,
-}))
+
 export default class Edit extends Component{
   constructor(props){
     super(props);
@@ -19,27 +16,27 @@ export default class Edit extends Component{
   }
 
   submit=()=>{
-    const { form,dispatch,editData,closeEdit } = this.props;
-    form.validateFields((error,values)=>{
-      if(!error){
-        dispatch({
-          type: 'monitorProject/updateProject',
-          payload: values,
-          callback:v=>{
-            if(v.code===100){
-              message.success("修改项目成功");
-              dispatch({
-                type: 'monitorProject/getProjects',
-              });
-              form.resetFields();
-              closeEdit();
-            }else{
-              message.success("修改项目失败，(* ￣︿￣)，请在稍后再试~");
-            }
-          }
-        })
-      }
-    })
+    // const { form,dispatch,editData,closeEdit } = this.props;
+    // form.validateFields((error,values)=>{
+    //   if(!error){
+    //     dispatch({
+    //       type: 'monitorProject/updateProject',
+    //       payload: values,
+    //       callback:v=>{
+    //         if(v.code===100){
+    //           message.success(v.message);
+    //           dispatch({
+    //             type: 'monitorProject/getProjects',
+    //           });
+    //           form.resetFields();
+    //           closeEdit();
+    //         }else{
+    //           message.success(v.message);
+    //         }
+    //       }
+    //     })
+    //   }
+    // })
   }
 
   render(){

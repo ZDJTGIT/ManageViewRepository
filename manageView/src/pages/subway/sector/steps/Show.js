@@ -3,6 +3,7 @@ import { connect } from 'dva';
 import { Input,Card,Form,Select,Icon,Row,Col,Button,message, Cascader,Alert,Table,Drawer,DatePicker,Radio,Modal } from 'antd';
 import moment from 'moment';
 import Edit from './Edit';
+import router from 'umi/router';
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -10,8 +11,8 @@ const RadioGroup = Radio.Group;
 const { confirm } = Modal;
 
 @Form.create()
-@connect(({ monitorProject }) => ({
-  monitorProject,
+@connect(({subwayGlobal})=>({
+  subwayGlobal
 }))
 export default class Show extends Component{
   constructor(props){
@@ -57,27 +58,54 @@ export default class Show extends Component{
     this.setState({showEdit:false});
   }
 
+  chooseSector=(record)=>{
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'subwayGlobal/setChoosedSector',
+      payload: {sectorId:record.sectorId},
+      callback:v=>{
+       router.push("/subway/monitorPoint")
+      }
+    })
+  }
+
   render(){
     const { showEdit,editData } = this.state;
-    const { form,toAdd,projects } = this.props;
+    const { form,sectors,toAdd } = this.props;
     const { getFieldDecorator } = form;
     const columns = [
     {
-      title: '项目id',
-      dataIndex: 'projectId',
-      key: 'projectId',
+      title: '区间id',
+      dataIndex: 'sectorId',
+      key: 'sectorId',
     },{
-      title: '项目名称',
-      dataIndex: 'projectName',
-      key: 'projectName',
-    },  {
-      title: '项目地址',
-      dataIndex: 'projectAddress',
-      key: 'projectAddress',
-    }, {
-      title: '项目描述',
-      dataIndex: 'projectDescription',
-      key: 'projectDescription',
+      title: '区间名称',
+      dataIndex: 'sectorName',
+      key: 'sectorName',
+    },{
+      title: '区间地址',
+      dataIndex: 'sectorAddress',
+      key: 'sectorAddress',
+    },{
+      title: '区间经度',
+      dataIndex: 'sectorLongitude',
+      key: 'sectorLongitude',
+    },{
+      title: '区间纬度',
+      dataIndex: 'sectorLatitude',
+      key: 'sectorLatitude',
+    },{
+      title: '区间创建时间',
+      dataIndex: 'sectorBeginTime',
+      key: 'sectorBeginTime',
+    },{
+      title: '区间结束时间',
+      dataIndex: 'sectorEndTime',
+      key: 'sectorEndTime',
+    },{
+      title: '区间状态',
+      dataIndex: 'sectorStatus',
+      key: 'sectorStatus',
     },{
       title: '操作',
       dataIndex: 'options',
@@ -85,7 +113,8 @@ export default class Show extends Component{
       render:(text,record)=>(
         <div>
           <Button icon="form" onClick={()=>{this.setState({showEdit:true,editData:record})}} style={{marginRight:'10%'}}></Button>
-          <Button icon="close" shape="circle" type="danger" onClick={()=>{alert("功能还在完善中...")}}></Button>
+          <Button icon="close" shape="circle" type="danger" onClick={()=>{alert("功能还在完善中...")}} style={{marginRight:'10%'}}></Button>
+          <Button type="primary" onClick={()=>{this.chooseSector(record)}}>更多</Button>
         </div>
       ),
     }];
@@ -106,13 +135,13 @@ export default class Show extends Component{
     return (
       <div>
         <Alert 
-          message="Tip：用户界面提示"
-          description="新建项目前请先确认用户或者角色已存在！"
+          message="Tip：区间界面提示"
+          description="此区间只展示地铁模块区间！"
           type="success"
           showIcon
           closable
         />
-        <Button type="primary" icon="medicine-box" style={{marginTop:'1%',marginBottom:'1%'}} onClick={()=>{toAdd()}}>新建项目</Button>
+        <Button type="primary" icon="medicine-box" style={{marginTop:'1%',marginBottom:'1%'}} onClick={()=>{toAdd()}}>新建区间</Button>
         <Form layout="horizontal">
           <Row>
             <Col xs={24}  sm={11} md={11} lg={6}>
@@ -170,9 +199,9 @@ export default class Show extends Component{
           </Row>
         </Form>
         
-        <Table dataSource={projects} columns={columns} bordered/>
+        <Table dataSource={sectors} columns={columns} bordered/>
         <Drawer
-          title={`正在编辑第${editData.projectId}号项目`}
+          title={`正在编辑第${editData.sectorId}号区间`}
           width={720}
           placement="right"
           onClose={()=>{this.setState({showEdit:false});this.editForm.resetFields()}}

@@ -9,9 +9,10 @@ import axios from 'axios';
 
 const { Tab, UserName, Password, Mobile, Captcha, Submit } = Login;
 
-@connect(({ login, loading }) => ({
+@connect(({ login, loading,instruction }) => ({
   login,
   submitting: loading.effects['login/login'],
+  instruction,
 }))
 class LoginPage extends Component {
   state = {
@@ -64,7 +65,6 @@ class LoginPage extends Component {
     <Alert style={{ marginBottom: 24 }} message={content} type="error" showIcon />
   );
 
-
   render() {
     const { login, submitting } = this.props;
     const { type, autoLogin } = this.state;
@@ -83,14 +83,15 @@ class LoginPage extends Component {
               login.type === 'account' &&
               !submitting &&
               this.renderMessage(formatMessage({ id: 'app.login.message-invalid-credentials' }))}
-            <UserName name="userName" placeholder="username: admin or user" />
+            <UserName name="userName" placeholder="用户名..." />
             <Password
               name="password"
-              placeholder="password: ant.design"
+              placeholder="密码..."
               onPressEnter={() => this.loginForm.validateFields(this.handleSubmit)}
             />
           </Tab>
-          <Tab key="mobile" tab={formatMessage({ id: 'app.login.tab-login-mobile' })}>
+          {/* 手机登陆 */}
+          {/* <Tab key="mobile" tab={formatMessage({ id: 'app.login.tab-login-mobile' })}>
             {login.status === 'error' &&
               login.type === 'mobile' &&
               !submitting &&
@@ -99,19 +100,22 @@ class LoginPage extends Component {
               )}
             <Mobile name="mobile" />
             <Captcha name="captcha" countDown={120} onGetCaptcha={this.onGetCaptcha} />
-          </Tab>
-          <div>
+          </Tab> */}
+          {/* 自动登陆忘记密码 */}
+          {/* <div>
             <Checkbox checked={autoLogin} onChange={this.changeAutoLogin}>
               <FormattedMessage id="app.login.remember-me" />
             </Checkbox>
             <a style={{ float: 'right' }} href="">
               <FormattedMessage id="app.login.forgot-password" />
             </a>
-          </div>
+          </div> */}
           <Submit loading={submitting}>
             <FormattedMessage id="app.login.login" />
           </Submit>
-          <div className={styles.other}>
+          
+          {/* 其他方式登陆 */}
+          {/* <div className={styles.other}>
             <FormattedMessage id="app.login.sign-in-with" />
             <Icon type="alipay-circle" className={styles.icon} theme="outlined" />
             <Icon type="taobao-circle" className={styles.icon} theme="outlined" />
@@ -119,7 +123,7 @@ class LoginPage extends Component {
             <Link className={styles.register} to="/user/register">
               <FormattedMessage id="app.login.signup" />
             </Link>
-          </div>
+          </div> */}
         </Login>
       </div>
     );

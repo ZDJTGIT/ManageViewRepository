@@ -105,14 +105,18 @@ export async function updateFakeList(params) {
 }
 
 export async function fakeAccountLogin(params) {
-  // const name = params.userName;
-  const pa = params;
-  // delete pa.userName;
-  delete pa.type;
-  // pa.username = name;
-  return request(`${global.constants.onlineWeb}/auth/login`, {
+  // const data = new FormData();
+  // data.append("userName",params.userName);
+  // data.append("password",params.password);
+  return request(`${global.constants.onlineWeb}/token/login`, {
     method: 'POST', 
-    body: pa,
+    body: params,
+  });
+}
+
+export async function logOut() {
+  return request(`${global.constants.onlineWeb}/token/logout`,{
+    method: 'DELETE',
   });
 }
 
@@ -129,10 +133,4 @@ export async function queryNotices() {
 
 export async function getFakeCaptcha(mobile) {
   return request(`/api/captcha?mobile=${mobile}`);
-}
-
-export async function xxx() {
-  return request("http://10.88.89.148:8080/special/sss",{
-    method: 'GET',
-  });
 }
