@@ -198,10 +198,10 @@ export default class Add extends Component{
                 </FormItem>   
               </Col>
               <Col span={24}>
-                <FormItem label="终端状态:" {...formItemLayout}>
+                <FormItem label="状态:" {...formItemLayout}>
                   {getFieldDecorator('status', {
                     rules: [
-                      { required: true, message: '请选择终端状态' },
+                      { required: true, message: '请选择状态' },
                     ],
                     initialValue:true,
                   })(

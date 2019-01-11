@@ -166,6 +166,18 @@ export default class SensorAdd extends Component{
                 </FormItem>   
               </Col>
               <Col span={24}>
+                <FormItem label="标定系数K:" {...formItemLayout}>
+                  {getFieldDecorator('timingFactor', {
+                    rules: [
+                      { required: true, message: '请输入标定系数K' },
+                      { validator: this.checkmonitorPoint },
+                    ],
+                  })(
+                    <Input placeholder="请输入标定系数K"/>
+                  )}
+                </FormItem>   
+              </Col>
+              <Col span={24}>
                 <FormItem label="传感器时间:" {...formItemLayout}>
                   {getFieldDecorator('sensorTime', {
                     rules: [

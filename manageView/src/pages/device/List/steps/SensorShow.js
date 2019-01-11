@@ -3,8 +3,9 @@ import { connect } from 'dva';
 import router from 'umi/router';
 import { Input,Card,Form,Select,Icon,Row,Col,Button,message, Cascader,Alert,Table,Drawer,DatePicker,Radio,Modal,Badge } from 'antd';
 import {ChartCard,MiniArea,MiniBar,MiniProgress,Field,Bar,Pie,TimelineChart,yuan} from '@/components/Charts';
+import SensorInfo from './SensorInfo';
+import SensorEdit from './SensorEdit';
 // import moment from 'moment';
-// import Edit from './Edit';
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -12,8 +13,8 @@ const RadioGroup = Radio.Group;
 const { confirm } = Modal;
 
 @Form.create()
-@connect(({ monitorProject }) => ({
-  monitorProject,
+@connect(({ deviceList }) => ({
+  deviceList,
 }))
 export default class SensorShow extends Component{
   constructor(props){
@@ -22,6 +23,7 @@ export default class SensorShow extends Component{
       showInfo:false, // 展示详情开关
       showEdit:false, // 展示修改开关
       editData:"", // 编辑内容
+      showInfoData:"", // 详情内容
     }
   }
 
@@ -29,9 +31,9 @@ export default class SensorShow extends Component{
 
   }
 
-  deleteProject=v=>{
+  deleteTerminal=v=>{
     confirm({
-      title: `确认删除 ${v.projectName} ？`,
+      title: `确认删除 ${v.sensorName} ？`,
       content: "删除后不可恢复，请谨慎操作",
       okText: '确定',
       okType: 'danger',
@@ -39,16 +41,16 @@ export default class SensorShow extends Component{
       onOk:()=>{
         const { dispatch } = this.props;
         dispatch({
-          type: 'monitorProject/deleteProject',
-          payload: {projectId:v.projectId},
+          type: 'deviceList/deleteSensor',
+          payload: v,
           callback:v=>{
-            if(v&&v.code===100){
-              message.success("删除项目成功");
+            if(v&&v.code===0){
+              message.success("删除传感器成功");
               dispatch({
-                type: 'monitorProject/getProjects',
+                type: 'deviceList/getAllSensors',
               });
             }else{
-              message.error("删除项目失败，(* ￣︿￣)，请在稍后再试~");
+              message.error("删除传感器失败，(* ￣︿￣)，请在稍后再试~");
             }
           }
         });
@@ -61,15 +63,10 @@ export default class SensorShow extends Component{
   }
 
   render(){
-    const { showEdit,editData,showInfo } = this.state;
+    const { showEdit,editData,showInfo,showInfoData } = this.state;
     const { form,toAdd,devices } = this.props;
     const { getFieldDecorator } = form;
     const columns = [
-    {
-      title: '传感器ID',
-      dataIndex: 'sensorId',
-      key: 'sensorId',
-    },
     {
       title: '传感器名称',
       dataIndex: 'sensorName',
@@ -94,6 +91,10 @@ export default class SensorShow extends Component{
       title: '精度',
       dataIndex: 'sensorAccuracy',
       key: 'sensorAccuracy',
+    },{
+      title: '精度',
+      dataIndex: 'timingFactor',
+      key: 'timingFactor',
     },{
       title: '状态',
       dataIndex: 'sensorStatus',
@@ -130,9 +131,9 @@ export default class SensorShow extends Component{
       key: 'options',
       render:(text,record)=>(
         <div>
-          <Icon type="search" style={{ fontSize: '20px', color: '#08c',cursor:'pointer',marginRight:5 }} onClick={()=>{this.setState({showInfo:true})}} />
-          <Icon type="edit" style={{ fontSize: '20px', color: '#08c',cursor:'pointer',marginRight:5 }} />
-          <Icon type="delete" style={{ fontSize: '20px', color: '#08c',cursor:'pointer',marginRight:5 }} />
+          <Icon type="search" style={{ fontSize: '20px', color: '#08c',cursor:'pointer',marginRight:5 }} onClick={()=>{this.setState({showInfo:true,showInfoData:record})}} />
+          <Icon type="edit" style={{ fontSize: '20px', color: '#08c',cursor:'pointer',marginRight:5 }} onClick={()=>{this.setState({showEdit:true,editData:record})}} />
+          <Icon type="delete" style={{ fontSize: '20px', color: '#08c',cursor:'pointer',marginRight:5 }} onClick={()=>{this.deleteTerminal(record)}} />
           <Icon type="setting" style={{ fontSize: '20px', color: '#08c',cursor:'pointer',marginRight:5 }} />
         </div>
       ),
@@ -293,15 +294,17 @@ export default class SensorShow extends Component{
         </Card>
         <Modal
           visible={showInfo}
-          
+          title={<div><Icon type="eye" /> 预览</div>}
           onCancel={()=>{this.setState({showInfo:false})}}
-
+          footer={null}
+          destroyOnClose
+          width={800}
         >
-
+        <SensorInfo data={showInfoData}/>
         </Modal>
         <Drawer
-          title={`正在编辑第${editData.projectId}号项目`}
-          width={720}
+          title={`正在编辑：${editData.sensorName}`}
+          width={800}
           placement="right"
           onClose={()=>{this.setState({showEdit:false});this.editForm.resetFields()}}
           maskClosable={true}
@@ -312,7 +315,7 @@ export default class SensorShow extends Component{
             paddingBottom: 53,
           }}
         >
-          {/* <Edit showEdit={showEdit} editData={editData} ref={c=>{this.editForm=c}} closeEdit={()=>{this.closeEdit()}}/> */}
+          <SensorEdit showEdit={showEdit} editData={editData} ref={c=>{this.editForm=c}} closeEdit={()=>{this.closeEdit()}}/>
         </Drawer>
       </div>
       );

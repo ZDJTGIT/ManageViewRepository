@@ -1,6 +1,6 @@
-import { getAllTerminalsImp,addTerminalImp,updateTerminalImp } from '@/services/device/DeviceList';
-import { getAllSensorsImp,addSensorImp } from '@/services/device/DeviceList';
-import { getAllDeviceConfigsImp,addDeviceConfigImp } from '@/services/device/DeviceList';
+import { getAllTerminalsImp,addTerminalImp,updateTerminalImp,deleteTerminalImp } from '@/services/device/DeviceList';
+import { getAllSensorsImp,addSensorImp,updateSensorImp,deleteSensorImp } from '@/services/device/DeviceList';
+import { getAllDeviceConfigsImp,addDeviceConfigImp,updateDeviceConfigImp,deleteDeviceConfigImp } from '@/services/device/DeviceList';
 
 export default {
   namespace: 'deviceList',
@@ -27,6 +27,10 @@ export default {
       const response = yield call(updateTerminalImp,payload);
       callback(response);
     },
+    *deleteTerminal({ payload, callback }, { call, put }){
+      const response = yield call(deleteTerminalImp,payload);
+      callback(response);
+    },
 
     // 传感器
     *getAllSensors({ payload, callback }, { call, put }){
@@ -42,6 +46,15 @@ export default {
       callback(response);
     },
 
+    *updateSensor({ payload, callback }, { call, put }){
+      const response = yield call(updateSensorImp,payload);
+      callback(response);
+    },
+
+    *deleteSensor({ payload, callback }, { call, put }){
+      const response = yield call(deleteSensorImp,payload);
+      callback(response);
+    },
 
     // 终-传绑定
     *getAllDeviceConfigs({ payload, callback }, { call, put }){
@@ -55,6 +68,14 @@ export default {
       const response = yield call(addDeviceConfigImp,payload);
       callback(response);
     },
+    *updateDeviceConfig({ payload, callback }, { call, put }){
+      const response = yield call(updateDeviceConfigImp,payload);
+      callback(response);
+    },
+    *deleteDeviceConfig({ payload, callback }, { call, put }){
+      const response = yield call(deleteDeviceConfigImp,payload);
+      callback(response);
+    }
   },
 
   reducers: {

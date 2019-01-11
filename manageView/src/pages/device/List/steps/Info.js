@@ -32,13 +32,13 @@ export default class Edit extends Component{
         <div>有效日期：&emsp;{data.endDate}</div>
         <div>终端状态：&emsp;{(_=>{switch(data.terminalStatus){
           case 1 :
-            return (<span>未使用<Badge status="default" /></span>);
+            return (<span><Badge status="default" />未使用</span>);
           case 2 :
-            return (<span>已上线<Badge status="success" /></span>);
+            return (<span><Badge status="success" />已上线</span>);
           case 3 :
-            return (<span>离线中<Badge status="warning" /></span>);
+            return (<span><Badge status="warning" />离线中</span>);
           case 4 :
-            return (<span>已损坏<Badge status="error" /></span>);
+            return (<span><Badge status="error" />已损坏</span>);
         }})()}</div>
       </div>
     )

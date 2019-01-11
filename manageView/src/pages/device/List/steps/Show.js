@@ -13,8 +13,8 @@ const RadioGroup = Radio.Group;
 const { confirm } = Modal;
 
 @Form.create()
-@connect(({ monitorProject }) => ({
-  monitorProject,
+@connect(({ deviceList }) => ({
+  deviceList,
 }))
 export default class Show extends Component{
   constructor(props){
@@ -31,29 +31,30 @@ export default class Show extends Component{
 
   }
 
-  deleteTerminal=v=>{
+  deleteTerminal=(record)=>{
     confirm({
-      title: `确认删除 ${v.projectName} ？`,
+      title: `确认删除 ${record.terminalName} ？`,
       content: "删除后不可恢复，请谨慎操作",
       okText: '确定',
       okType: 'danger',
       cancelText: '取消',
       onOk:()=>{
-        // const { dispatch } = this.props;
-        // dispatch({
-        //   type: 'monitorProject/deleteProject',
-        //   payload: {projectId:v.projectId},
-        //   callback:v=>{
-        //     if(v&&v.code===100){
-        //       message.success("删除项目成功");
-        //       dispatch({
-        //         type: 'monitorProject/getProjects',
-        //       });
-        //     }else{
-        //       message.error("删除项目失败，(* ￣︿￣)，请在稍后再试~");
-        //     }
-        //   }
-        // });
+        const { dispatch } = this.props;
+        dispatch({
+          type: 'deviceList/deleteTerminal',
+          payload: record,
+          callback:v=>{
+            console.log(v.code);
+            if(v&&v.code===0){
+              message.success("删除项目成功");
+              dispatch({
+                type: 'deviceList/getAllTerminals',
+              });
+            }else{
+              message.error("删除项目失败，(* ￣︿￣)，请在稍后再试~");
+            }
+          }
+        });
       }
     });
   }
@@ -138,7 +139,7 @@ export default class Show extends Component{
         <div>
           <Icon type="search" style={{ fontSize: '20px', color: '#08c',cursor:'pointer',marginRight:5 }} onClick={()=>{this.setState({showInfo:true,showInfoData:record})}} />
           <Icon type="edit" style={{ fontSize: '20px', color: '#08c',cursor:'pointer',marginRight:5 }} onClick={()=>{this.setState({showEdit:true,editData:record})}} />
-          <Icon type="delete" style={{ fontSize: '20px', color: '#08c',cursor:'pointer',marginRight:5 }} onClick={(record)=>{this.deleteTerminal(record)}} />
+          <Icon type="delete" style={{ fontSize: '20px', color: '#08c',cursor:'pointer',marginRight:5 }} onClick={()=>{this.deleteTerminal(record)}} />
           <Icon type="setting" style={{ fontSize: '20px', color: '#08c',cursor:'pointer',marginRight:5 }} />
         </div>
       ),
@@ -304,12 +305,11 @@ export default class Show extends Component{
           footer={null}
           destroyOnClose
           width={800}
-          
         >
           <Info data={showInfoData} />
         </Modal>
         <Drawer
-          title={`正在编辑第${editData.projectId}号项目`}
+          title={`正在编辑：${editData.terminalName}`}
           width={800}
           placement="right"
           onClose={()=>{this.setState({showEdit:false});this.editForm.resetFields()}}

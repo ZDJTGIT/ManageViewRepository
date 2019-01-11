@@ -3,8 +3,8 @@ import { connect } from 'dva';
 import router from 'umi/router';
 import { Input,Card,Form,Select,Icon,Row,Col,Button,message, Cascader,Alert,Table,Drawer,DatePicker,Radio,Modal,Badge } from 'antd';
 import {ChartCard,MiniArea,MiniBar,MiniProgress,Field,Bar,Pie,TimelineChart,yuan} from '@/components/Charts';
-// import moment from 'moment';
-// import Info from './Info';
+import Info from './Info';
+import Edit from './Edit';
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -30,9 +30,9 @@ export default class Show extends Component{
 
   }
 
-  deleteProject=v=>{
+  deleteDeviceConfig=v=>{
     confirm({
-      title: `确认删除 ${v.projectName} ？`,
+      title: `确认删除 ${v.dcId}号绑定 ？`,
       content: "删除后不可恢复，请谨慎操作",
       okText: '确定',
       okType: 'danger',
@@ -40,16 +40,16 @@ export default class Show extends Component{
       onOk:()=>{
         const { dispatch } = this.props;
         dispatch({
-          type: 'monitorProject/deleteProject',
-          payload: {projectId:v.projectId},
+          type: 'deviceList/deleteDeviceConfig',
+          payload: v,
           callback:v=>{
-            if(v&&v.code===100){
-              message.success("删除项目成功");
+            if(v&&v.code===0){
+              message.success("删除绑定成功");
               dispatch({
-                type: 'monitorProject/getProjects',
+                type: 'deviceList/getAllDeviceConfigs',
               });
             }else{
-              message.error("删除项目失败，(* ￣︿￣)，请在稍后再试~");
+              message.error("删除绑定失败，(* ￣︿￣)，请在稍后再试~");
             }
           }
         });
@@ -99,7 +99,6 @@ export default class Show extends Component{
       dataIndex: 'status',
       key: 'status',
       render:(record)=>{
-        console.log(record)
         const notStart = (
           <span>
             <Badge status="default" />禁用
@@ -133,8 +132,8 @@ export default class Show extends Component{
       render:(text,record)=>(
         <div>
           <Icon type="search" style={{ fontSize: '20px', color: '#08c',cursor:'pointer',marginRight:5 }} onClick={()=>{this.setState({showInfo:true,showInfoData:record})}} />
-          <Icon type="edit" style={{ fontSize: '20px', color: '#08c',cursor:'pointer',marginRight:5 }} />
-          <Icon type="delete" style={{ fontSize: '20px', color: '#08c',cursor:'pointer',marginRight:5 }} />
+          <Icon type="edit" style={{ fontSize: '20px', color: '#08c',cursor:'pointer',marginRight:5 }} onClick={()=>{this.setState({editData:record,showEdit:true})}} />
+          <Icon type="delete" style={{ fontSize: '20px', color: '#08c',cursor:'pointer',marginRight:5 }} onClick={()=>{this.deleteDeviceConfig(record)}} />
           <Icon type="setting" style={{ fontSize: '20px', color: '#08c',cursor:'pointer',marginRight:5 }} />
         </div>
       ),
@@ -302,10 +301,10 @@ export default class Show extends Component{
           width={800}
          
         >
-          {/* <Info data={showInfoData} /> */}
+          <Info data={showInfoData} />
         </Modal>
         <Drawer
-          title={`正在编辑第${editData.projectId}号项目`}
+          title={`正在编辑：${editData.dcId}号绑定信息`}
           width={720}
           placement="right"
           onClose={()=>{this.setState({showEdit:false});this.editForm.resetFields()}}
@@ -317,7 +316,7 @@ export default class Show extends Component{
             paddingBottom: 53,
           }}
         >
-          {/* <Edit showEdit={showEdit} editData={editData} ref={c=>{this.editForm=c}} closeEdit={()=>{this.closeEdit()}}/> */}
+          <Edit showEdit={showEdit} editData={editData} ref={c=>{this.editForm=c}} closeEdit={()=>{this.closeEdit()}}/>
         </Drawer>
       </div>
       );

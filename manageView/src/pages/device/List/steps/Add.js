@@ -137,7 +137,7 @@ export default class Add extends Component{
                       { validator: this.checkmonitorPoint },
                     ],
                   })(
-                    <Input placeholder="请输入额定电压"/>
+                    <Input placeholder="请输入额定电压" suffix={"单位：伏特（v）"}/>
                   )}
                 </FormItem>   
               </Col>
@@ -161,7 +161,7 @@ export default class Add extends Component{
                       { validator: this.checkmonitorPoint },
                     ],
                   })(
-                    <Input placeholder="请输入采集频率"/>
+                    <Input placeholder="请输入采集频率" suffix={"单位：次/秒（count/s）"}/>
                   )}
                 </FormItem>   
               </Col>
@@ -192,8 +192,8 @@ export default class Add extends Component{
                   })(
                     <RadioGroup>
                       <Radio value={1}>未使用</Radio>
-                      <Radio value={2}>已上线</Radio>
-                      <Radio value={3}>离线中</Radio>
+                      {/* <Radio value={2}>已上线</Radio>
+                      <Radio value={3}>离线中</Radio> */}
                       <Radio value={4}>已损坏</Radio>
                     </RadioGroup>
                   )}

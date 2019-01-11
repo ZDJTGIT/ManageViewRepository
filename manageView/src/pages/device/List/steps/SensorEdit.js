@@ -26,13 +26,13 @@ export default class Edit extends Component{
         params.productDate = values.productDate.format('YYYY-MM-DD HH:mm:ss');
         params.endDate = values.endDate.format('YYYY-MM-DD HH:mm:ss');
         dispatch({
-          type: 'deviceList/updateTerminal',
+          type: 'deviceList/updateSensor',
           payload: values,
           callback:v=>{
-            if(v.code===0){
+            if(v&&v.code===0){
               message.success("修改终端成功");
               dispatch({
-                type: 'deviceList/getAllTerminals',
+                type: 'deviceList/getAllSensors',
               });
               form.resetFields();
               closeEdit();
@@ -61,37 +61,33 @@ export default class Edit extends Component{
           <Form layout="vertical" hideRequiredMark style={{marginTop:'4%'}} id="editForm">
             <Row gutter={16}>
               <Col span={12}>
-                <Form.Item label="终端Id：">
-                  {getFieldDecorator('terminalId', {
-                    rules: [{ required: true, message: '请输入终端id' }],
-                    initialValue:editData.terminalId,
+                <Form.Item label="传感器ID：">
+                  {getFieldDecorator('sensorId', {
+                    rules: [{ required: true, message: '请输入传感器ID' }],
+                    initialValue:editData.sensorId,
                   })(<Input disabled />)}
                 </Form.Item>
               </Col>
+              <Col span={12}></Col>
               <Col span={12}>
-                <Form.Item label="终端编号：">
-                  {getFieldDecorator('terminalNumber', {
-                    rules: [{ required: true, message: '请输入终端编号' }],
-                    initialValue:editData.terminalNumber,
-                  })(
-                    <Input
-                      style={{ width: '100%' }}
-                      placeholder="请输入终端编号"
-                    />
-                  )}
+                <Form.Item label="传感器名：">
+                  {getFieldDecorator('sensorName', {
+                    rules: [{ required: true, message: '请输入传感器名' }],
+                    initialValue:editData.sensorName,
+                  })(<Input style={{ width: '100%' }} placeholder="请输入传感器名" />)}
                 </Form.Item>
               </Col>
             </Row>
             <Row gutter={16}>
               <Col span={12}>
-                <Form.Item label="终端名称：">
-                  {getFieldDecorator('terminalName', {
-                    rules: [{ required: true, message: '请输入终端名称' }],
-                    initialValue:editData.terminalName,
+                <Form.Item label="传感器编号：">
+                  {getFieldDecorator('sensorNumber', {
+                    rules: [{ required: true, message: '请输入传感器编号' }],
+                    initialValue:editData.sensorNumber,
                   })(
                     <Input
                       style={{ width: '100%' }}
-                      placeholder="请输入终端名称"
+                      placeholder="请输入传感器编号"
                     />
                   )}
                 </Form.Item>
@@ -99,12 +95,12 @@ export default class Edit extends Component{
               <Col span={12}>
                 <Form.Item label="厂商：">
                   {getFieldDecorator('manufacturer', {
-                    rules: [{ required: true, message: '请输入厂商' }],
+                    rules: [{ required: true, message: '请输入厂商名称' }],
                     initialValue:editData.manufacturer,
                   })(
                     <Input
                       style={{ width: '100%' }}
-                      placeholder="请输入厂商"
+                      placeholder="请输入厂商名称"
                     />
                   )}
                 </Form.Item>
@@ -112,27 +108,27 @@ export default class Edit extends Component{
             </Row>
             <Row gutter={16}>
               <Col span={12}>
-                <Form.Item label="终端型号：">
-                  {getFieldDecorator('terminalModel', {
-                    rules: [{ required: true, message: '请输入终端型号' }],
-                    initialValue:editData.terminalModel,
+                <Form.Item label="传感器型号：">
+                  {getFieldDecorator('sensorModel', {
+                    rules: [{ required: true, message: '请输入传感器型号' }],
+                    initialValue:editData.sensorModel,
                   })(
                     <Input
                       style={{ width: '100%' }}
-                      placeholder="请输入终端型号"
+                      placeholder="请输入传感器型号"
                     />
                   )}
                 </Form.Item>
               </Col>
               <Col span={12}>
-                <Form.Item label="额定电压（v）：">
-                  {getFieldDecorator('voltage', {
-                    rules: [{ required: true, message: '请输入额定电压' }],
-                    initialValue:editData.voltage,
+                <Form.Item label="传感器地址：">
+                  {getFieldDecorator('sensorAddress', {
+                    rules: [{ required: true, message: '请输入传感器地址' }],
+                    initialValue:editData.sensorAddress,
                   })(
                     <Input
                       style={{ width: '100%' }}
-                      placeholder="请输入额定电压"
+                      placeholder="请输入传感器地址"
                     />
                   )}
                 </Form.Item>
@@ -140,33 +136,46 @@ export default class Edit extends Component{
             </Row>
             <Row gutter={16}>
               <Col span={12}>
-                <Form.Item label="通道数：">
-                  {getFieldDecorator('channelNumber', {
-                    rules: [{ required: true, message: '请输入通道数' }],
-                    initialValue:editData.channelNumber,
+                <Form.Item label="量程：">
+                  {getFieldDecorator('sensorRange', {
+                    rules: [{ required: true, message: '请输入量程' }],
+                    initialValue:editData.sensorRange,
                   })(
                     <Input
                       style={{ width: '100%' }}
-                      placeholder="请输入通道数"
+                      placeholder="请输入量程"
                     />
                   )}
                 </Form.Item>
               </Col>
               <Col span={12}>
-                <Form.Item label="采集频率（次/s）：">
-                  {getFieldDecorator('collectionFrequency', {
-                    rules: [{ required: true, message: '请输入采集频率' }],
-                    initialValue:editData.collectionFrequency,
+                <Form.Item label="精度：">
+                  {getFieldDecorator('sensorAccuracy', {
+                    rules: [{ required: true, message: '请输入精度' }],
+                    initialValue:editData.sensorAccuracy,
                   })(
                     <Input
                       style={{ width: '100%' }}
-                      placeholder="请输入采集频率"
+                      placeholder="请输入精度"
                     />
                   )}
                 </Form.Item>
               </Col>
             </Row>
             <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item label="标定系数K：">
+                  {getFieldDecorator('timingFactor', {
+                    rules: [{ required: true, message: '请输入标定系数K' }],
+                    initialValue:editData.timingFactor,
+                  })(
+                    <Input
+                      style={{ width: '100%' }}
+                      placeholder="请输入标定系数K"
+                    />
+                  )}
+                </Form.Item>
+              </Col>
               <Col span={12}>
                 <Form.Item label="生产日期：">
                   {getFieldDecorator('productDate', {
@@ -183,12 +192,15 @@ export default class Edit extends Component{
                   )}
                 </Form.Item>
               </Col>
+              
+            </Row>
+            <Row gutter={15}>
               <Col span={12}>
                 <Form.Item label="结束日期：">
                   {getFieldDecorator('endDate', {
-                    rules: [{ required: true, message: '请输入结束日期' }],
+                    rules: [{ required: true, message: '请选择结束日期' }],
                     initialValue:moment(editData.endDate),
-                    // initialValue:editData.endDate,
+                    // initialValue:editData.productDate,
                   })(
                     <DatePicker
                       style={{width:"100%"}}
@@ -203,17 +215,16 @@ export default class Edit extends Component{
             <Row gutter={16}>
               <Col span={12}>
                 <FormItem label="终端状态:">
-                  {getFieldDecorator('terminalStatus', {
+                  {getFieldDecorator('sensorStatus', {
                     rules: [
                       { required: true, message: '请选择终端状态' },
                     ],
-                    initialValue:editData.terminalStatus,
+                    initialValue:editData.sensorStatus,
                   })(
                     <RadioGroup>
                       <Radio value={1}>未使用</Radio>
-                      {/* <Radio value={2}>已上线</Radio>
-                      <Radio value={3}>离线中</Radio> */}
-                      <Radio value={4}>已损坏</Radio>
+                      <Radio value={2}>使用中</Radio>
+                      <Radio value={3}>已损坏</Radio>
                     </RadioGroup>
                   )}
                 </FormItem>

@@ -171,7 +171,9 @@ export default function request(url, option) {
         localStorage.setItem("token",response.headers.get('Authorization'));
       }
       if (newOptions.method === 'DELETE' || response.status === 204) {
-        return response.text();
+        // pro默认返回
+        // return response.text();
+        return response.json();
       }
       return response.json();
     })

@@ -28,6 +28,14 @@ export async function updateTerminalImp(params) {
   });
 }
 
+export async function deleteTerminalImp(params) {
+  return request(`${global.constants.onlineWeb}/terminal/removeTerminal`,{
+    method: 'DELETE',
+    body: {
+      ...params,
+    },
+  });
+}
 
 // 传感器
 export async function getAllSensorsImp() {
@@ -45,6 +53,23 @@ export async function addSensorImp(params) {
   });
 }
 
+export async function updateSensorImp(params) {
+  return request(`${global.constants.onlineWeb}/sensor/modifySensor`,{
+    method: 'PUT',
+    body: {
+      ...params,
+    },
+  });
+}
+
+export async function deleteSensorImp(params) {
+  return request(`${global.constants.onlineWeb}/sensor/removeSensor`,{
+    method: 'DELETE',
+    body: {
+      ...params,
+    },
+  });
+}
 // 设备绑定
 export async function getAllDeviceConfigsImp() {
   return request(`${global.constants.onlineWeb}/deviceConfig/listDeviceConfig`,{
@@ -55,6 +80,24 @@ export async function getAllDeviceConfigsImp() {
 export async function addDeviceConfigImp(params) {
   return request(`${global.constants.onlineWeb}/deviceConfig/addDeviceConfig`,{
     method: 'POST',
+    body: {
+      ...params,
+    },
+  });
+}
+
+export async function updateDeviceConfigImp(params) {
+  return request(`${global.constants.onlineWeb}/deviceConfig/modifyDeviceConfig`,{
+    method: 'PUT',
+    body: {
+      ...params,
+    },
+  });
+}
+
+export async function deleteDeviceConfigImp(params) {
+  return request(`${global.constants.onlineWeb}/deviceConfig/removeDeviceConfig`,{
+    method: 'DELETE',
     body: {
       ...params,
     },
