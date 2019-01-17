@@ -1,5 +1,5 @@
-import { getAllTerminalsImp,addTerminalImp,updateTerminalImp,deleteTerminalImp } from '@/services/device/DeviceList';
-import { getAllSensorsImp,addSensorImp,updateSensorImp,deleteSensorImp } from '@/services/device/DeviceList';
+import { getAllTerminalsImp,addTerminalImp,updateTerminalImp,deleteTerminalImp,deleteTerminalsImp,isInUseImp,terminalsInUseImp } from '@/services/device/DeviceList';
+import { getAllSensorsImp,addSensorImp,updateSensorImp,deleteSensorImp,deleteSensorsImp,sensorIsInUseImp,sensorsInUseImp } from '@/services/device/DeviceList';
 import { getAllDeviceConfigsImp,addDeviceConfigImp,updateDeviceConfigImp,deleteDeviceConfigImp } from '@/services/device/DeviceList';
 
 export default {
@@ -31,6 +31,18 @@ export default {
       const response = yield call(deleteTerminalImp,payload);
       callback(response);
     },
+    *deleteTerminals({ payload, callback }, { call, put }){
+      const response = yield call(deleteTerminalsImp,payload);
+      callback(response);
+    },
+    *isInUse({ payload, callback }, { call, put }){
+      const response = yield call(isInUseImp,payload);
+      callback(response);
+    },
+    *terminalsInUse({ payload, callback }, { call, put }){
+      const response = yield call(terminalsInUseImp,payload);
+      callback(response);
+    },
 
     // 传感器
     *getAllSensors({ payload, callback }, { call, put }){
@@ -55,7 +67,21 @@ export default {
       const response = yield call(deleteSensorImp,payload);
       callback(response);
     },
+    
+    *deleteSensors({ payload, callback }, { call, put }){
+      const response = yield call(deleteSensorsImp,payload);
+      callback(response);
+    },
 
+    *sensorIsInUse({ payload, callback }, { call, put }){
+      const response = yield call(sensorIsInUseImp,payload);
+      callback(response);
+    },
+
+    *sensorsInUse({ payload, callback }, { call, put }){
+      const response = yield call(sensorsInUseImp,payload);
+      callback(response);
+    },
     // 终-传绑定
     *getAllDeviceConfigs({ payload, callback }, { call, put }){
       const response = yield call(getAllDeviceConfigsImp,payload);

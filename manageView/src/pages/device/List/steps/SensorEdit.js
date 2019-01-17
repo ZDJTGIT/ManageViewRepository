@@ -7,8 +7,8 @@ const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 
 @Form.create()
-@connect(({ deviceList }) => ({
-  deviceList,
+@connect(({ deviceList,sysCode }) => ({
+  deviceList,sysCode
 }))
 export default class Edit extends Component{
   constructor(props){
@@ -46,7 +46,7 @@ export default class Edit extends Component{
   }
 
   render(){
-    const { editData,form,showEdit,closeEdit } = this.props;
+    const { editData,form,showEdit,closeEdit,sysCode } = this.props;
     const { getFieldDecorator } = form;
     return(
       <div>
@@ -177,6 +177,25 @@ export default class Edit extends Component{
                 </Form.Item>
               </Col>
               <Col span={12}>
+                <Form.Item label="解析方式：">
+                  {getFieldDecorator('parserMethod', {
+                    rules: [{ required: true, message: '请选择解析方式' }],
+                    initialValue:editData.parserMethod,
+                    // initialValue:editData.productDate,
+                  })(
+                    <Select placeholder="请选择解析方式" showSearch optionFilterProp="children">
+                      {sysCode.parserMethods.map(v=>{
+                        return (
+                          <Option key={Math.random()} value={v.scId}>{v.itemName}</Option>
+                        );
+                      })}
+                    </Select>
+                  )}
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row gutter={15}>
+              <Col span={12}>
                 <Form.Item label="生产日期：">
                   {getFieldDecorator('productDate', {
                     rules: [{ required: true, message: '请选择生产日期' }],
@@ -192,9 +211,6 @@ export default class Edit extends Component{
                   )}
                 </Form.Item>
               </Col>
-              
-            </Row>
-            <Row gutter={15}>
               <Col span={12}>
                 <Form.Item label="结束日期：">
                   {getFieldDecorator('endDate', {

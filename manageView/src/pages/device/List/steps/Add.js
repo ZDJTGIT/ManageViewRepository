@@ -161,7 +161,7 @@ export default class Add extends Component{
                       { validator: this.checkmonitorPoint },
                     ],
                   })(
-                    <Input placeholder="请输入采集频率" suffix={"单位：次/秒（count/s）"}/>
+                    <Input placeholder="请输入采集频率" suffix={"单位：秒/次（s/count）"}/>
                   )}
                 </FormItem>   
               </Col>

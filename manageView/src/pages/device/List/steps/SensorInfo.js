@@ -6,6 +6,9 @@ import moment from 'moment';
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 
+@connect(({ sysCode }) => ({
+  sysCode
+}))
 export default class Edit extends Component{
   constructor(props){
     super(props);
@@ -15,11 +18,17 @@ export default class Edit extends Component{
   }
 
   render(){
-    const { data } = this.props;
-    console.log(data);
+    const { data,sysCode } = this.props;
+    let parserMethod = "解析错误";
+    sysCode.parserMethods.map(v=>{
+      if(v.scId==data.parserMethod){
+        parserMethod = v.itemName;
+      }
+    })
+
     return(
 
-      <div style={{textAlign:"left",fontSize:"20px",margin:"0 100px 0 30%"}}>
+      <div style={{textAlign:"left",fontSize:"20px",margin:"0 100px 0 25%"}}>
         <div>传感器ID：&emsp;&emsp;&emsp;&emsp;{data.sensorId}</div>
         <div>传感器编号：&emsp;&emsp;&emsp;{data.sensorNumber}</div>
         <div>传感器名称：&emsp;&emsp;&emsp;{data.sensorName}</div>
@@ -29,6 +38,7 @@ export default class Edit extends Component{
         <div>传感器量程：&emsp;&emsp;&emsp;{data.sensorRange}</div>
         <div>传感器精度：&emsp;&emsp;&emsp;{data.sensorAccuracy}</div>
         <div>传感器标定系数：&emsp;{data.timingFactor}</div>
+        <div>解析方式：&emsp;&emsp;&emsp;&emsp;{parserMethod}</div>
         <div>生产日期：&emsp;&emsp;&emsp;&emsp;{data.productDate}</div>
         <div>结束日期：&emsp;&emsp;&emsp;&emsp;{data.endDate}</div>
         <div>传感器状态：&emsp;&emsp;&emsp;{(_=>{switch(data.sensorStatus){

@@ -37,12 +37,11 @@ const checkStatus = response => {
         });
         return;
       }
-      if(a.code == 3){
+      if(a.code == 101){
         router.push('/exception/403');
         return;
       }
-      if(a.code == 4){
-        alert("长时间未操作，请重新登陆")
+      if(a.code == 100){
         router.push("/user/login");
         // window.g_app._store.dispatch({
         //   type: 'login/logout',
@@ -139,7 +138,7 @@ export default function request(url, option) {
         Accept: 'application/json',
         ...newOptions.headers,
       };
-      newOptions.body = JSON.stringify(newOptions.body);
+      // newOptions.body = JSON.stringify(newOptions.body);
     }
   }
 

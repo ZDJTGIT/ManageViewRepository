@@ -3,8 +3,8 @@ import request from '@/utils/request';
 import '@/pages/config'
 import moment from 'moment';
 
+// 终端
 export async function getAllTerminalsImp() {
-  // 终端
   return request(`${global.constants.onlineWeb}/terminal/listTerminal`,{
     method: 'GET',
   });
@@ -34,6 +34,30 @@ export async function deleteTerminalImp(params) {
     body: {
       ...params,
     },
+  });
+}
+
+export async function deleteTerminalsImp(params) {
+  const temp = new FormData();
+  temp.append("terminalIdList",params)
+  return request(`${global.constants.onlineWeb}/terminal/removeTerminals`,{
+    method: 'POST',
+    body: temp
+  });
+}
+
+export async function isInUseImp(params) {
+  return request(`${global.constants.onlineWeb}/terminal/isInUse?terminalNumber=${params}`,{
+    method: 'GET',
+  });
+}
+
+export async function terminalsInUseImp(params) {
+  const temp = new FormData();
+  temp.append("terminalIdList",params)
+  return request(`${global.constants.onlineWeb}/terminal/terminalsInUse`,{
+    method: 'POST',
+    body: temp
   });
 }
 
@@ -68,6 +92,30 @@ export async function deleteSensorImp(params) {
     body: {
       ...params,
     },
+  });
+}
+
+export async function deleteSensorsImp(params) {
+  const temp = new FormData();
+  temp.append("sensorIdList",params)
+  return request(`${global.constants.onlineWeb}/sensor/removeSensors`,{
+    method: 'POST',
+    body: temp
+  });
+}
+
+export async function sensorIsInUseImp(params) {
+  return request(`${global.constants.onlineWeb}/sensor/isInUse?sensorNumber=${params}`,{
+    method: 'GET',
+  });
+}
+
+export async function sensorsInUseImp(params) {
+  const temp = new FormData();
+  temp.append("sensorIdList",params)
+  return request(`${global.constants.onlineWeb}/sensor/sensorsInUse`,{
+    method: 'POST',
+    body: temp
   });
 }
 // 设备绑定

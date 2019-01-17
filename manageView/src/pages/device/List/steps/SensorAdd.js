@@ -11,8 +11,8 @@ const { TextArea } = Input;
 const { RangePicker } = DatePicker;
 
 @Form.create()
-@connect(({ deviceList }) => ({
-  deviceList,
+@connect(({ deviceList,sysCode }) => ({
+  deviceList,sysCode
 }))
 export default class SensorAdd extends Component{
   constructor(props){
@@ -48,8 +48,15 @@ export default class SensorAdd extends Component{
     })
   }
 
+  componentWillMount(){
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'sysCode/getAllParserMethods',
+    })
+  }
+
   render(){
-    const { form } = this.props;
+    const { form,sysCode } = this.props;
     const { getFieldDecorator } = form;
     const formItemLayout = {
       labelCol: {
@@ -166,6 +173,23 @@ export default class SensorAdd extends Component{
                 </FormItem>   
               </Col>
               <Col span={24}>
+                <FormItem label="解析方式:" {...formItemLayout}>
+                  {getFieldDecorator('parserMethod', {
+                    rules: [
+                      { required: true, message: '请选择解析方式' },
+                    ],
+                  })(
+                    <Select placeholder="请选择解析方式" showSearch optionFilterProp="children">
+                      {sysCode.parserMethods.map(v=>{
+                        return (
+                          <Option key={Math.random()} value={v.scId}>{v.itemName}</Option>
+                        );
+                      })}
+                    </Select>
+                  )}
+                </FormItem>   
+              </Col>
+              <Col span={24}>
                 <FormItem label="标定系数K:" {...formItemLayout}>
                   {getFieldDecorator('timingFactor', {
                     rules: [
@@ -204,8 +228,8 @@ export default class SensorAdd extends Component{
                   })(
                     <RadioGroup>
                       <Radio value={1}>未使用</Radio>
-                      <Radio value={2}>使用中</Radio>
-                      <Radio value={3}>已损坏</Radio>
+                      {/* <Radio value={2}>使用中</Radio>
+                      <Radio value={3}>已损坏</Radio> */}
                     </RadioGroup>
                   )}
                 </FormItem>   

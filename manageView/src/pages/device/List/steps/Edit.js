@@ -153,7 +153,7 @@ export default class Edit extends Component{
                 </Form.Item>
               </Col>
               <Col span={12}>
-                <Form.Item label="采集频率（次/s）：">
+                <Form.Item label="采集频率（秒/次）：">
                   {getFieldDecorator('collectionFrequency', {
                     rules: [{ required: true, message: '请输入采集频率' }],
                     initialValue:editData.collectionFrequency,

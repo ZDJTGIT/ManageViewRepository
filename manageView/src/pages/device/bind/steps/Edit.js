@@ -162,6 +162,7 @@ export default class Edit extends Component{
                     <Input
                       style={{ width: '100%' }}
                       placeholder="请输入传感器地址"
+                      disabled
                     />
                   )}
                 </Form.Item>
@@ -175,6 +176,7 @@ export default class Edit extends Component{
                     <Input
                       style={{ width: '100%' }}
                       placeholder="请输入传感器标定系数K"
+                      disabled
                     />
                   )}
                 </Form.Item>

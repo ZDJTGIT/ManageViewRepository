@@ -12,8 +12,8 @@ const RadioGroup = Radio.Group;
 const { confirm } = Modal;
 
 @Form.create()
-@connect(({ deviceList }) => ({
-  deviceList,
+@connect(({ deviceList,sysCode }) => ({
+  deviceList,sysCode
 }))
 export default class Show extends Component{
   constructor(props){
@@ -23,11 +23,15 @@ export default class Show extends Component{
       showEdit:false, // 展示修改开关
       editData:"", // 编辑内容
       showInfoData:"", // 预览内容
+      showSend:false, // 发送内容modal开关
     }
   }
 
   componentWillMount(){
-
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'sysCode/getAllParserMethods',
+    })
   }
 
   deleteDeviceConfig=v=>{
@@ -62,8 +66,8 @@ export default class Show extends Component{
   }
 
   render(){
-    const { showEdit,editData,showInfo,showInfoData } = this.state;
-    const { form,toAdd,devices } = this.props;
+    const { showEdit,editData,showInfo,showInfoData,showSend } = this.state;
+    const { form,toAdd,devices,sysCode } = this.props;
     const { getFieldDecorator } = form;
     const columns = [
     {
@@ -74,6 +78,10 @@ export default class Show extends Component{
       title: '终端通道号',
       dataIndex: 'terminalChannel',
       key: 'terminalChannel',
+    },{
+      title: '终端采集频率（秒/次）',
+      dataIndex: 'collectionFrequency',
+      key: 'collectionFrequency',
     }, {
       title: '传感器编号',
       dataIndex: 'sensorNumber',
@@ -86,6 +94,19 @@ export default class Show extends Component{
       title: '传感器标定系数K',
       dataIndex: 'timingFactor',
       key: 'timingFactor',
+    },{
+      title: '解析方式',
+      dataIndex: 'parserMethod',
+      key: 'parserMethod',
+      render:(value,record)=>{
+        let temp = "解析错误";
+        sysCode.parserMethods.map(v=>{
+          if(v.scId==record.parserMethod){
+            temp = v.itemName;
+          }
+        })
+        return(temp);
+      }
     },{
       title: '测点编号',
       dataIndex: 'monitorPointNumber',
@@ -134,7 +155,7 @@ export default class Show extends Component{
           <Icon type="search" style={{ fontSize: '20px', color: '#08c',cursor:'pointer',marginRight:5 }} onClick={()=>{this.setState({showInfo:true,showInfoData:record})}} />
           <Icon type="edit" style={{ fontSize: '20px', color: '#08c',cursor:'pointer',marginRight:5 }} onClick={()=>{this.setState({editData:record,showEdit:true})}} />
           <Icon type="delete" style={{ fontSize: '20px', color: '#08c',cursor:'pointer',marginRight:5 }} onClick={()=>{this.deleteDeviceConfig(record)}} />
-          <Icon type="setting" style={{ fontSize: '20px', color: '#08c',cursor:'pointer',marginRight:5 }} />
+          <Icon type="setting" style={{ fontSize: '20px', color: '#08c',cursor:'pointer',marginRight:5 }} onClick={()=>{this.setState({showSend:true})}} />
         </div>
       ),
     }];
@@ -302,6 +323,17 @@ export default class Show extends Component{
          
         >
           <Info data={showInfoData} />
+        </Modal>
+        <Modal
+          visible={showSend}
+          title={"手动采集"}
+          onCancel={()=>{this.setState({showSend:false})}}
+          footer={null}
+          destroyOnClose
+          width={800}
+         
+        >
+          1111111111111111
         </Modal>
         <Drawer
           title={`正在编辑：${editData.dcId}号绑定信息`}

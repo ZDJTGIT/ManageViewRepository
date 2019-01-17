@@ -11,14 +11,15 @@ const { TextArea } = Input;
 const { RangePicker } = DatePicker;
 
 @Form.create()
-@connect(({ deviceList }) => ({
-  deviceList,
+@connect(({ deviceList,sysCode }) => ({
+  deviceList,sysCode
 }))
 export default class Add extends Component{
   constructor(props){
     super(props);
     this.state={
-      sensor: [] // 当前选中的传感器
+      sensor: [], // 当前选中的传感器
+      terminal: [], // 当前选中的终端
     }
   }
 
@@ -30,6 +31,9 @@ export default class Add extends Component{
     dispatch({
       type: 'deviceList/getAllSensors',
     });
+    dispatch({
+      type: 'sysCode/getAllParserMethods',
+    })
   }
 
   submit=()=>{
@@ -65,9 +69,19 @@ export default class Add extends Component{
     });
   }
 
+  terminalChange=(value)=>{
+    const { deviceList } = this.props;
+    deviceList.devices.map(v=>{
+      if(v.terminalNumber===value){
+        this.setState({terminal:v});
+        return;
+      }
+    });
+  }
+
   render(){
-    const { sensor } = this.state;
-    const { form,deviceList } = this.props;
+    const { sensor,terminal } = this.state;
+    const { form,deviceList,sysCode } = this.props;
     const { getFieldDecorator } = form;
     const formItemLayout = {
       labelCol: {
@@ -107,11 +121,14 @@ export default class Add extends Component{
                       { validator: this.checkmonitorPoint },
                     ],
                   })(
-                    <Select placeholder="请选择终端编号" showSearch optionFilterProp="children">
+                    <Select placeholder="请选择终端编号" showSearch optionFilterProp="children" onChange={(value)=>{this.terminalChange(value)}}>
                       {deviceList.devices.map(v=>{
-                        return (
-                          <Option key={Math.random()} value={v.terminalNumber}>{v.terminalNumber}</Option>
-                        );
+                        if(v.terminalStatus===2){
+                          return (
+                            <Option key={Math.random()} value={v.terminalNumber}>{v.terminalNumber}</Option>
+                          );
+                        }
+                        return ;
                       })}
                     </Select>
                   )}
@@ -139,11 +156,26 @@ export default class Add extends Component{
                   })(
                     <Select placeholder="请选择传感器编号" showSearch optionFilterProp="children" onChange={(value)=>{this.sensorChange(value)}}>
                       {deviceList.sensors.map(v=>{
-                        return (
-                          <Option key={Math.random()} value={v.sensorNumber}>{v.sensorNumber}</Option>
-                        );
+                        if(v.sensorStatus===1){
+                          return (
+                            <Option key={Math.random()} value={v.sensorNumber}>{v.sensorNumber}</Option>
+                          );
+                        }
+                        return;
                       })}
                     </Select>
+                  )}
+                </FormItem>   
+              </Col>
+              <Col span={24}>
+                <FormItem label="终端采集频率:" {...formItemLayout}>
+                  {getFieldDecorator('collectionFrequency', {
+                    rules: [
+                      { required: false, message: '请输入终端采集频率' },
+                    ],
+                    initialValue: terminal.collectionFrequency,
+                  })(
+                    <Input placeholder="请输入终端采集频率" disabled/>
                   )}
                 </FormItem>   
               </Col>
@@ -151,13 +183,13 @@ export default class Add extends Component{
                 <FormItem label="传感器地址:" {...formItemLayout}>
                   {getFieldDecorator('sensorAddress', {
                     rules: [
-                      { required: true, message: '请输入传感器地址' },
+                      { required: false, message: '请输入传感器地址' },
                       { validator: this.checkmonitorPoint },
                     ],
                     initialValue: sensor.sensorAddress,
                   },
                   )(
-                    <Input placeholder="请输入传感器地址" readOnly /> 
+                    <Input placeholder="请输入传感器地址" disabled /> 
                   )}
                 </FormItem>   
               </Col>
@@ -165,11 +197,29 @@ export default class Add extends Component{
                 <FormItem label="传感器标定系数K:" {...formItemLayout}>
                   {getFieldDecorator('timingFactor', {
                     rules: [
-                      { required: true, message: '请输入传感器标定系数K' },
+                      { required: false, message: '请输入传感器标定系数K' },
                     ],
                     initialValue: sensor.timingFactor,
                   })(
-                    <Input placeholder="请输入传感器标定系数K" readOnly />
+                    <Input placeholder="请输入传感器标定系数K" disabled />
+                  )}
+                </FormItem>   
+              </Col>
+              <Col span={24}>
+                <FormItem label="解析方式:" {...formItemLayout}>
+                  {getFieldDecorator('parserMethod', {
+                    rules: [
+                      { required: false, message: '请选择解析方式' },
+                    ],
+                    initialValue: sensor.parserMethod,
+                  })(
+                    <Select placeholder="请选择解析方式" showSearch optionFilterProp="children" disabled>
+                      {sysCode.parserMethods.map(v=>{
+                        return (
+                          <Option key={Math.random()} value={v.scId}>{v.itemName}</Option>
+                        );
+                      })}
+                    </Select>
                   )}
                 </FormItem>   
               </Col>
@@ -177,11 +227,11 @@ export default class Add extends Component{
                 <FormItem label="测点编号:" {...formItemLayout}>
                   {getFieldDecorator('monitorPointNumber', {
                     rules: [
-                      { required: true, message: '请输入测点编号' },
+                      { required: false, message: '请输入测点编号' },
                       { validator: this.checkmonitorPoint },
                     ],
                   })(
-                    <Input placeholder="请输入测点编号"/>
+                    <Input placeholder="请输入测点编号" disabled/>
                   )}
                 </FormItem>   
               </Col>
@@ -189,11 +239,11 @@ export default class Add extends Component{
                 <FormItem label="监测类型:" {...formItemLayout}>
                   {getFieldDecorator('monitorType', {
                     rules: [
-                      { required: true, message: '请输入监测类型' },
+                      { required: false, message: '请输入监测类型' },
                       { validator: this.checkmonitorPoint },
                     ],
                   })(
-                    <Input placeholder="请输入监测类型"/>
+                    <Input placeholder="请输入监测类型" disabled/>
                   )}
                 </FormItem>   
               </Col>
@@ -214,7 +264,7 @@ export default class Add extends Component{
               </Col>
               <Col style={{textAlign:'center'}} span={12} offset={6}>
                 <Button icon="up" type="primary" ghost onClick={()=>{this.submit()}}>提交</Button>
-                <Button icon="redo" type="default" style={{marginLeft:'5%'}} onClick={()=>{form.resetFields()}}>重置</Button>
+                <Button icon="redo" type="default" style={{marginLeft:'5%'}} onClick={()=>{this.setState({sensor:[],terminal:[]});form.resetFields()}}>重置</Button>
               </Col>
             </Row>
           </Form>

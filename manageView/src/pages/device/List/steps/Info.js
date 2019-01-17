@@ -16,7 +16,6 @@ export default class Edit extends Component{
 
   render(){
     const { data } = this.props;
-    console.log(data);
     return(
 
       <div style={{textAlign:"left",fontSize:"20px",margin:"0 100px 0 30%"}}>

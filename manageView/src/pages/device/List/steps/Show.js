@@ -24,6 +24,7 @@ export default class Show extends Component{
       showEdit:false, // 展示修改开关
       editData:"", // 编辑内容
       showInfoData:"", // 预览内容
+      deleteTerminals:[] // 批量删除的传感器
     }
   }
 
@@ -32,31 +33,94 @@ export default class Show extends Component{
   }
 
   deleteTerminal=(record)=>{
-    confirm({
-      title: `确认删除 ${record.terminalName} ？`,
-      content: "删除后不可恢复，请谨慎操作",
-      okText: '确定',
-      okType: 'danger',
-      cancelText: '取消',
-      onOk:()=>{
-        const { dispatch } = this.props;
-        dispatch({
-          type: 'deviceList/deleteTerminal',
-          payload: record,
-          callback:v=>{
-            console.log(v.code);
-            if(v&&v.code===0){
-              message.success("删除项目成功");
-              dispatch({
-                type: 'deviceList/getAllTerminals',
-              });
-            }else{
-              message.error("删除项目失败，(* ￣︿￣)，请在稍后再试~");
-            }
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'deviceList/isInUse',
+      payload: record.terminalNumber,
+      callback:v=>{
+        let msg = "删除后不可恢复,请谨慎操作";
+        if(v&&v.code===0){
+          msg = "注意：该终端正在使用中，强行删除可能出现一系列不可预估问题!";
+        }
+        confirm({
+          title: `确认删除 ${record.terminalName} ？`,
+          content: <div style={{fontSize:"16px",color:"#F00"}}>{msg}</div>,
+          okText: '确定',
+          okType: 'danger',
+          width: '666px',
+          centered: 'true',
+          maskClosable: 'true',
+          cancelText: '取消',
+          onOk:()=>{
+            dispatch({
+              type: 'deviceList/deleteTerminal',
+              payload: record,
+              callback:_=>{
+                if(_&&_.code===0){
+                  message.success("删除终端成功");
+                  dispatch({
+                    type: 'deviceList/getAllTerminals',
+                  });
+                }else{
+                  message.error("删除终端失败，(* ￣︿￣)，请在稍后再试~");
+                }
+              }
+            });
           }
         });
       }
     });
+  }
+
+  deleteTerminals=()=>{
+    const { deleteTerminals } = this.state;
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'deviceList/terminalsInUse',
+      payload: deleteTerminals,
+      callback:v=>{
+        let msg = ""
+        if(v&&v.code===0){
+          v.data.map(_=>{
+            msg = `${msg}${_.terminalName}、`
+          })
+        }
+        if(msg.length>0){
+          msg = "注意："+msg.substring(0,msg.length-1)+" 终端正在使用中，强行删除可能引发一系列未知错误！";
+        }else{
+          msg = "删除操作不可恢复，确认删除？";
+        }
+        confirm({
+          title: `确认批量删除选中的终端？`,
+          content: <div style={{fontSize:"16px",color:"#F00"}}>{msg}</div>,
+          okText: '确定',
+          okType: 'danger',
+          width: '666px',
+          centered: 'true',
+          maskClosable: 'true',
+          cancelText: '取消',
+          onOk:()=>{
+            dispatch({
+              type: 'deviceList/deleteTerminals',
+              payload: deleteTerminals,
+              callback:_=>{
+                if(_&&_.code===0){
+                  message.success("删除终端成功");
+                  this.setState({deleteTerminals:[]});
+                  dispatch({
+                    type: 'deviceList/getAllTerminals',
+                  });
+                }else{
+                  message.error("删除终端失败，(* ￣︿￣)，请在稍后再试~");
+                }
+              }
+            });
+          }
+        });
+      }
+    });
+    
+    
   }
 
   closeEdit=()=>{
@@ -64,7 +128,7 @@ export default class Show extends Component{
   }
 
   render(){
-    const { showEdit,editData,showInfo,showInfoData } = this.state;
+    const { showEdit,editData,showInfo,showInfoData,deleteTerminals } = this.state;
     const { form,toAdd,devices } = this.props;
     const { getFieldDecorator } = form;
     const columns = [
@@ -198,7 +262,8 @@ export default class Show extends Component{
     ];    
     const rowSelection = {
       onChange: (selectedRowKeys, selectedRows) => {
-        console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+        this.setState({deleteTerminals:selectedRowKeys});
+        // console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
       },
       getCheckboxProps: record => ({
         disabled: record.name === 'Disabled User', // Column configuration not to be checked
@@ -237,7 +302,7 @@ export default class Show extends Component{
         </Row>
         <Card style={{marginTop:1}}>
           <Button type="primary" icon="file-add" style={{marginBottom:'5px',marginRight:'10px',border:"0px"}} onClick={()=>{router.push('/device/addDevice')}}>新建</Button>
-          <Button type="danger" icon="delete" style={{marginBottom:'5px',marginRight:'10px'}} onClick={()=>{toAdd()}}>批量删除</Button>
+          <Button type="danger" icon="delete" style={{marginBottom:'5px',marginRight:'10px'}} onClick={()=>{this.deleteTerminals()}} disabled={deleteTerminals.length==0}>批量删除</Button>
           <Button type="primary" icon="select" style={{marginBottom:'5px',marginRight:'10px'}} onClick={()=>{toAdd()}}>导出设备</Button>
           <Form layout="horizontal">
             <Row>
@@ -296,7 +361,7 @@ export default class Show extends Component{
             </Row>
           </Form>
           
-          <Table rowSelection={rowSelection} dataSource={devices} columns={columns}/>
+          <Table rowSelection={rowSelection} dataSource={devices} columns={columns} rowKey={record=>record.terminalId} />
         </Card>
         <Modal
           visible={showInfo}
