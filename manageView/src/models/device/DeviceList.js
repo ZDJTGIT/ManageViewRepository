@@ -1,6 +1,7 @@
 import { getAllTerminalsImp,addTerminalImp,updateTerminalImp,deleteTerminalImp,deleteTerminalsImp,isInUseImp,terminalsInUseImp } from '@/services/device/DeviceList';
 import { getAllSensorsImp,addSensorImp,updateSensorImp,deleteSensorImp,deleteSensorsImp,sensorIsInUseImp,sensorsInUseImp } from '@/services/device/DeviceList';
 import { getAllDeviceConfigsImp,addDeviceConfigImp,updateDeviceConfigImp,deleteDeviceConfigImp } from '@/services/device/DeviceList';
+import { getMonitorPointByTerminalNumberAndSensorNumberImp } from '@/services/device/DeviceList';
 
 export default {
   namespace: 'deviceList',
@@ -101,8 +102,15 @@ export default {
     *deleteDeviceConfig({ payload, callback }, { call, put }){
       const response = yield call(deleteDeviceConfigImp,payload);
       callback(response);
-    }
+    },
+    // 测点
+    *getMonitorPointByTerminalNumberAndSensorNumber({ payload, callback }, { call, put }){
+      const response = yield call(getMonitorPointByTerminalNumberAndSensorNumberImp,payload);
+      callback(response);
+    },
   },
+
+
 
   reducers: {
     // 终端

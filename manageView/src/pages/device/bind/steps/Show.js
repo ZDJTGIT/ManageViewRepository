@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
 import router from 'umi/router';
-import { Input,Card,Form,Select,Icon,Row,Col,Button,message, Cascader,Alert,Table,Drawer,DatePicker,Radio,Modal,Badge } from 'antd';
+import { Input,Card,Form,Select,Icon,Row,Col,Button,message, Cascader,Alert,Table,Drawer,DatePicker,Radio,Modal,Badge,Tooltip } from 'antd';
 import {ChartCard,MiniArea,MiniBar,MiniProgress,Field,Bar,Pie,TimelineChart,yuan} from '@/components/Charts';
 import Info from './Info';
 import Edit from './Edit';
@@ -152,10 +152,18 @@ export default class Show extends Component{
       key: 'options',
       render:(text,record)=>(
         <div>
-          <Icon type="search" style={{ fontSize: '20px', color: '#08c',cursor:'pointer',marginRight:5 }} onClick={()=>{this.setState({showInfo:true,showInfoData:record})}} />
-          <Icon type="edit" style={{ fontSize: '20px', color: '#08c',cursor:'pointer',marginRight:5 }} onClick={()=>{this.setState({editData:record,showEdit:true})}} />
-          <Icon type="delete" style={{ fontSize: '20px', color: '#08c',cursor:'pointer',marginRight:5 }} onClick={()=>{this.deleteDeviceConfig(record)}} />
-          <Icon type="setting" style={{ fontSize: '20px', color: '#08c',cursor:'pointer',marginRight:5 }} onClick={()=>{this.setState({showSend:true})}} />
+          <Tooltip placement="top" title={"详情"}>
+            <Icon type="search" style={{ fontSize: '20px', color: '#08c',cursor:'pointer',marginRight:5 }} onClick={()=>{this.setState({showInfo:true,showInfoData:record})}} />
+          </Tooltip>
+          <Tooltip placement="top" title={"编辑"}>
+            <Icon type="edit" style={{ fontSize: '20px', color: '#08c',cursor:'pointer',marginRight:5 }} onClick={()=>{this.setState({editData:record,showEdit:true})}} />
+          </Tooltip>
+          <Tooltip placement="top" title={"删除"}>
+            <Icon type="delete" style={{ fontSize: '20px', color: '#08c',cursor:'pointer',marginRight:5 }} onClick={()=>{this.deleteDeviceConfig(record)}} />
+          </Tooltip>
+          <Tooltip placement="top" title={"手动采集"}>
+            <Icon type="setting" style={{ fontSize: '20px', color: '#08c',cursor:'pointer',marginRight:5 }} onClick={()=>{this.setState({showSend:true})}} />
+          </Tooltip>
         </div>
       ),
     }];

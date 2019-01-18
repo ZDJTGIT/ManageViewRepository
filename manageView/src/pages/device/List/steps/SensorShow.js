@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
 import router from 'umi/router';
-import { Input,Card,Form,Select,Icon,Row,Col,Button,message, Cascader,Alert,Table,Drawer,DatePicker,Radio,Modal,Badge } from 'antd';
+import { Input,Card,Form,Select,Icon,Row,Col,Button,message, Cascader,Alert,Table,Drawer,DatePicker,Radio,Modal,Badge,Tooltip } from 'antd';
 import {ChartCard,MiniArea,MiniBar,MiniProgress,Field,Bar,Pie,TimelineChart,yuan} from '@/components/Charts';
 import SensorInfo from './SensorInfo';
 import SensorEdit from './SensorEdit';
@@ -211,10 +211,18 @@ export default class SensorShow extends Component{
       key: 'options',
       render:(text,record)=>(
         <div>
-          <Icon type="search" style={{ fontSize: '20px', color: '#08c',cursor:'pointer',marginRight:5 }} onClick={()=>{this.setState({showInfo:true,showInfoData:record})}} />
-          <Icon type="edit" style={{ fontSize: '20px', color: '#08c',cursor:'pointer',marginRight:5 }} onClick={()=>{this.setState({showEdit:true,editData:record})}} />
-          <Icon type="delete" style={{ fontSize: '20px', color: '#08c',cursor:'pointer',marginRight:5 }} onClick={()=>{this.deleteSensor(record)}} />
-          <Icon type="setting" style={{ fontSize: '20px', color: '#08c',cursor:'pointer',marginRight:5 }} />
+          <Tooltip placement="top" title={"详情"}>
+            <Icon type="search" style={{ fontSize: '20px', color: '#08c',cursor:'pointer',marginRight:5 }} onClick={()=>{this.setState({showInfo:true,showInfoData:record})}} />
+          </Tooltip>
+          <Tooltip placement="top" title={"编辑"}>
+            <Icon type="edit" style={{ fontSize: '20px', color: '#08c',cursor:'pointer',marginRight:5 }} onClick={()=>{this.setState({showEdit:true,editData:record})}} />
+          </Tooltip>
+          <Tooltip placement="top" title={"删除"}>
+            <Icon type="delete" style={{ fontSize: '20px', color: '#08c',cursor:'pointer',marginRight:5 }} onClick={()=>{this.deleteSensor(record)}} />
+          </Tooltip>
+          <Tooltip placement="top" title={"待定"}>
+            <Icon type="setting" style={{ fontSize: '20px', color: '#08c',cursor:'pointer',marginRight:5 }} />
+          </Tooltip>
         </div>
       ),
     }];
@@ -375,7 +383,7 @@ export default class SensorShow extends Component{
         </Card>
         <Modal
           visible={showInfo}
-          title={<div><Icon type="eye" /> 预览</div>}
+          title={<div><Icon type="eye" /> 详情</div>}
           onCancel={()=>{this.setState({showInfo:false})}}
           footer={null}
           destroyOnClose

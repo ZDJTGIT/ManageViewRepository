@@ -9,3 +9,10 @@ export async function getAllParserMethodsImp() {
     method: 'GET',
   });
 }
+
+export async function getAllMonitorTypeImp() {
+  // 终端
+  return request(`${global.constants.onlineWeb}/sysCode/listMonitorType`,{
+    method: 'GET',
+  });
+}

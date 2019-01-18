@@ -151,3 +151,10 @@ export async function deleteDeviceConfigImp(params) {
     },
   });
 }
+
+// 测点
+export async function getMonitorPointByTerminalNumberAndSensorNumberImp(params) {
+  return request(`${global.constants.onlineWeb}/monitorPoint/getMonitorPointByTerminalNumberAndSensorNumber?sensorNumber=${params.sensor.sensorNumber}&terminalNumber=${params.terminal.terminalNumber}`,{
+    method: 'GET',
+  });
+}
