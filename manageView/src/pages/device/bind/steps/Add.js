@@ -59,12 +59,12 @@ export default class Add extends Component{
           callback:v=>{
             if(v&&v.code===0){
               form.resetFields();
-              message.success("设备绑定成功");
+              message.success(v.msg);
               dispatch({
                 type: 'deviceList/getAllDeviceConfigs',
               });
             }else{
-              message.error("设备绑定失败，(* ￣︿￣)，请在稍后再试~")
+              message.error(v.msg);
             }
           }
         })

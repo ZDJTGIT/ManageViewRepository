@@ -5,6 +5,15 @@ import { setAuthority } from '@/utils/authority';
 import { getPageQuery } from '@/utils/utils';
 import { reloadAuthorized } from '@/utils/Authorized';
 
+// 解析token
+const utf8ToBase64 = (str)=>{
+  return btoa(unescape(encodeURIComponent(str)));
+};
+
+const base64ToUtf8 = (str)=>{
+  return decodeURIComponent(escape(atob(str)));
+};
+
 export default {
   namespace: 'login',
 
@@ -25,6 +34,7 @@ export default {
       if (response.code === 0) {
 
         localStorage.setItem('token',response.data);
+        // console.log(base64ToUtf8(response.data.split('\.')[1]));
         reloadAuthorized();
         // const urlParams = new URL(window.location.href);
         // const params = getPageQuery();

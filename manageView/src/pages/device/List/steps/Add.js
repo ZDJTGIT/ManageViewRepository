@@ -171,7 +171,7 @@ export default class Add extends Component{
                         { validator: this.checkmonitorPoint },
                       ],
                     })(
-                      <Input placeholder="请输入采集频率" suffix={"单位：秒/次（s/count）"}/>
+                      <Input placeholder="请输入采集频率" suffix={"单位：分/次（m/count）"}/>
                     )}
                   </FormItem>   
                 </Col>
@@ -225,7 +225,7 @@ export default class Add extends Component{
                 <p>额定电压是指终端长时间正常工作的最佳电压。单位为伏特（v）。</p>
               </Panel>
               <Panel header="采集频率" key="3" style={customPanelStyle}>
-                <p>采集频率是终端收集并发送数据到云端的间隔。单位：秒/次。</p>
+                <p>采集频率是终端收集并发送数据到云端的间隔。单位：分/次。</p>
               </Panel>
             </Collapse>
           </Col>

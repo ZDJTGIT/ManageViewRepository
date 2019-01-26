@@ -5,6 +5,15 @@ import hash from 'hash.js';
 import { isAntdPro } from './utils';
 import { connect } from 'dva';
 
+// 解析token
+const utf8ToBase64 = (str)=>{
+  return btoa(unescape(encodeURIComponent(str)));
+};
+
+const base64ToUtf8 = (str)=>{
+  return decodeURIComponent(escape(atob(str)));
+};
+
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
   201: '新建或修改数据成功。',

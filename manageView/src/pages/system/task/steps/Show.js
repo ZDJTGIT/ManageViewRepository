@@ -3,7 +3,7 @@ import { connect } from 'dva';
 import router from 'umi/router';
 import { Input,Card,Form,Select,Icon,Row,Col,Button,message, Cascader,Alert,Table,Drawer,DatePicker,Radio,Modal,Badge,Tooltip } from 'antd';
 import {ChartCard,MiniArea,MiniBar,MiniProgress,Field,Bar,Pie,TimelineChart,yuan} from '@/components/Charts';
-import Info from './Info';
+// import Info from './Info';
 import Edit from './Edit';
 
 const FormItem = Form.Item;
@@ -12,8 +12,8 @@ const RadioGroup = Radio.Group;
 const { confirm } = Modal;
 
 @Form.create()
-@connect(({ deviceList,sysCode }) => ({
-  deviceList,sysCode
+@connect(({ taskList }) => ({
+  taskList
 }))
 export default class Show extends Component{
   constructor(props){
@@ -29,14 +29,14 @@ export default class Show extends Component{
 
   componentWillMount(){
     const { dispatch } = this.props;
-    dispatch({
-      type: 'sysCode/getAllParserMethods',
-    })
+    // dispatch({
+    //   type: 'taskList/getAllTasks',
+    // })
   }
 
-  deleteDeviceConfig=v=>{
+  deleteTask=v=>{
     confirm({
-      title: `确认删除 ${v.dcId}号绑定 ？`,
+      title: `确认删除 ${v.taskName} 任务 ？`,
       content: "删除后不可恢复，请谨慎操作",
       okText: '确定',
       okType: 'danger',
@@ -44,16 +44,16 @@ export default class Show extends Component{
       onOk:()=>{
         const { dispatch } = this.props;
         dispatch({
-          type: 'deviceList/deleteDeviceConfig',
+          type: 'taskList/deleteTask',
           payload: v,
           callback:v=>{
             if(v&&v.code===0){
-              message.success("删除绑定成功");
+              message.success(v.msg);
               dispatch({
-                type: 'deviceList/getAllDeviceConfigs',
+                type: 'taskList/getAllTasks',
               });
             }else{
-              message.error("删除绑定失败，(* ￣︿￣)，请在稍后再试~");
+              message.error(v.msg);
             }
           }
         });
@@ -67,85 +67,37 @@ export default class Show extends Component{
 
   render(){
     const { showEdit,editData,showInfo,showInfoData,showSend } = this.state;
-    const { form,devices,sysCode } = this.props;
+    const { form,toAdd,taskList,tasks } = this.props;
     const { getFieldDecorator } = form;
     const columns = [
     {
-      title: '终端编号',
-      dataIndex: 'terminalNumber',
-      key: 'terminalNumber',
+      title: '任务名称',
+      dataIndex: 'taskName',
+      key: 'taskName',
     },  {
-      title: '终端通道号',
-      dataIndex: 'terminalChannel',
-      key: 'terminalChannel',
+      title: '任务组名',
+      dataIndex: 'taskGroup',
+      key: 'taskGroup',
     },{
-      title: '终端采集频率（秒/次）',
-      dataIndex: 'collectionFrequency',
-      key: 'collectionFrequency',
+      title: '任务描述',
+      dataIndex: 'taskDescription',
+      key: 'taskDescription',
     }, {
-      title: '传感器编号',
-      dataIndex: 'sensorNumber',
-      key: 'sensorNumber',
+      title: '任务状态',
+      dataIndex: 'taskStatus',
+      key: 'taskStatus',
     },{
-      title: '传感器地址',
-      dataIndex: 'sensorAddress',
-      key: 'sensorAddress',
+      title: '任务触发表达式',
+      dataIndex: 'taskCorn',
+      key: 'taskCorn',
     },{
-      title: '传感器标定系数K',
-      dataIndex: 'timingFactor',
-      key: 'timingFactor',
+      title: '任务触发间隔时间（单位分钟）',
+      dataIndex: 'intervalInMinutes',
+      key: 'intervalInMinutes',
     },{
-      title: '解析方式',
-      dataIndex: 'parserMethod',
-      key: 'parserMethod',
-      render:(value,record)=>{
-        let temp = "解析错误";
-        sysCode.parserMethods.map(v=>{
-          if(v.scId==record.parserMethod){
-            temp = v.itemName;
-          }
-        })
-        return(temp);
-      }
-    },{
-      title: '测点编号',
-      dataIndex: 'monitorPointNumber',
-      key: 'monitorPointNumber',
-    },{
-      title: '监测类型',
-      dataIndex: 'monitorType',
-      key: 'monitorType',
-    },{
-      title: '状态',
-      dataIndex: 'status',
-      key: 'status',
-      render:(record)=>{
-        const notStart = (
-          <span>
-            <Badge status="default" />禁用
-          </span>
-        );
-        const started = (
-          <span>
-            <Badge status="success" />启用
-          </span>
-        );
-        const stopped = (
-          <span>
-            <Badge status="warning" />离线中
-          </span>
-        );
-        const end = (
-          <span>
-            <Badge status="error" />已损坏
-          </span>
-        );
-        if (record===true) {
-          return started;
-        } else {
-          return notStart;
-        }
-      }
+      title: '任务执行类',
+      dataIndex: 'taskClass',
+      key: 'taskClass',
     },{
       title: '操作',
       dataIndex: 'options',
@@ -159,7 +111,7 @@ export default class Show extends Component{
             <Icon type="edit" style={{ fontSize: '20px', color: '#08c',cursor:'pointer',marginRight:5 }} onClick={()=>{this.setState({editData:record,showEdit:true})}} />
           </Tooltip>
           <Tooltip placement="top" title={"删除"}>
-            <Icon type="delete" style={{ fontSize: '20px', color: '#08c',cursor:'pointer',marginRight:5 }} onClick={()=>{this.deleteDeviceConfig(record)}} />
+            <Icon type="delete" style={{ fontSize: '20px', color: '#08c',cursor:'pointer',marginRight:5 }} onClick={()=>{this.deleteTask(record)}} />
           </Tooltip>
           <Tooltip placement="top" title={"手动采集"}>
             <Icon type="setting" style={{ fontSize: '20px', color: '#08c',cursor:'pointer',marginRight:5 }} onClick={()=>{this.setState({showSend:true})}} />
@@ -230,38 +182,10 @@ export default class Show extends Component{
     };
     return (
       <div>
-        <Row type='flex' justify='center' gutter='5'>
-          <Col span={12}>
-            <Card title="设备概况" style={{ borderRadius: '8px' }} extra={survey()}>
-              <div style={{height:200}}>
-              <Pie
-                hasLegend
-                title="销售额"
-                subTitle="销售额"
-                total={() => (
-                  <span
-                    dangerouslySetInnerHTML={{
-                      __html: yuan(salesPieData.reduce((pre, now) => now.y + pre, 0))
-                    }}
-                  />
-                )}
-                data={salesPieData}
-                valueFormat={val => <span dangerouslySetInnerHTML={{ __html: yuan(val) }} />}
-              />
-              </div>
-            </Card>
-          </Col>
-
-          <Col span={12}>
-            <Card title="所属用户" style={{ borderRadius: '8px' }} extra={<div style={{height:30}}></div>}>
-              <div style={{height:200}}></div>
-            </Card>
-          </Col>
-        </Row>
         <Card style={{marginTop:1}}>
-          <Button type="primary" icon="file-add" style={{marginBottom:'5px',marginRight:'10px',border:"0px"}} onClick={()=>{router.push('/device/addDeviceConfig')}}>新建</Button>
-          <Button type="danger" icon="delete" style={{marginBottom:'5px',marginRight:'10px'}} onClick={()=>{alert("开发中。。。")}}>批量删除</Button>
-          <Button type="primary" icon="select" style={{marginBottom:'5px',marginRight:'10px'}} onClick={()=>{alert("开发中。。。")}}>导出设备</Button>
+          <Button type="primary" icon="file-add" style={{marginBottom:'5px',marginRight:'10px',border:"0px"}} onClick={()=>{router.push('/system/addList')}}>新建</Button>
+          <Button type="danger" icon="delete" style={{marginBottom:'5px',marginRight:'10px'}} onClick={()=>{toAdd()}}>批量删除</Button>
+          <Button type="primary" icon="select" style={{marginBottom:'5px',marginRight:'10px'}} onClick={()=>{toAdd()}}>导出设备</Button>
           <Form layout="horizontal">
             <Row>
               <Col xs={24}  sm={11} md={11} lg={6}>
@@ -319,7 +243,7 @@ export default class Show extends Component{
             </Row>
           </Form>
           
-          <Table rowSelection={rowSelection} dataSource={devices} columns={columns}/>
+          <Table rowSelection={rowSelection} dataSource={tasks} columns={columns}/>
         </Card>
         <Modal
           visible={showInfo}
@@ -330,7 +254,7 @@ export default class Show extends Component{
           width={800}
          
         >
-          <Info data={showInfoData} />
+          {/* <Info data={showInfoData} /> */}
         </Modal>
         <Modal
           visible={showSend}
@@ -344,7 +268,7 @@ export default class Show extends Component{
           1111111111111111
         </Modal>
         <Drawer
-          title={`正在编辑：${editData.dcId}号绑定信息`}
+          title={`正在编辑：${editData.taskName} 任务`}
           width={720}
           placement="right"
           onClose={()=>{this.setState({showEdit:false});this.editForm.resetFields()}}

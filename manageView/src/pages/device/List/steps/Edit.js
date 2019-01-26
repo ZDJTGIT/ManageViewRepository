@@ -153,7 +153,7 @@ export default class Edit extends Component{
                 </Form.Item>
               </Col>
               <Col span={12}>
-                <Form.Item label="采集频率（秒/次）：">
+                <Form.Item label="采集频率（分/次）：">
                   {getFieldDecorator('collectionFrequency', {
                     rules: [{ required: true, message: '请输入采集频率' }],
                     initialValue:editData.collectionFrequency,
@@ -211,8 +211,8 @@ export default class Edit extends Component{
                   })(
                     <RadioGroup>
                       <Radio value={1}>未使用</Radio>
-                      {/* <Radio value={2}>已上线</Radio>
-                      <Radio value={3}>离线中</Radio> */}
+                      <Radio value={2}>已上线</Radio>
+                      <Radio value={3}>离线中</Radio>
                       <Radio value={4}>已损坏</Radio>
                     </RadioGroup>
                   )}

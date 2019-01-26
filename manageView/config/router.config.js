@@ -24,8 +24,8 @@ export default [
         icon: 'warning',
         path: '/exception',
         Routes: ['src/pages/Authorized'],
-        authority: ['admin','user'],
-        
+        authority: ['admin', 'user'],
+
         routes: [
           // exception
           {
@@ -62,14 +62,14 @@ export default [
             name: 'user',
             component: './monitor/user/User',
             Routes: ['src/pages/Authorized'],
-            authority: [ 'admin','user'],
+            authority: ['admin', 'user'],
           },
           {
             path: '/monitor/project',
             name: '项目',
             component: './monitor/project/Project',
             Routes: ['src/pages/Authorized'],
-            authorityL: ['admin','user'],
+            authorityL: ['admin', 'user'],
           },
           // {
           //   path: '/monitor/startSector',
@@ -96,21 +96,21 @@ export default [
             name: '项目',
             component: './subway/project/Project',
             Routes: ['src/pages/Authorized'],
-            authority: [ 'admin','user'],
+            authority: ['admin', 'user'],
           },
           {
             path: '/subway/sector',
             name: '区间',
             component: './subway/sector/Sector',
             Routes: ['src/pages/Authorized'],
-            authority: [ 'admin','user'],
+            authority: ['admin', 'user'],
           },
           {
             path: '/subway/monitorPoint',
             name: '测点',
             component: './subway/monitorPoint/Begin',
             Routes: ['src/pages/Authorized'],
-            authority: [ 'admin','user'],
+            authority: ['admin', 'user'],
           },
         ],
       },
@@ -125,45 +125,68 @@ export default [
             name: '终端管理',
             component: './device/List/DeviceList',
             Routes: ['src/pages/Authorized'],
-            authority: [ 'admin','user'],
+            authority: ['admin', 'user'],
           },
           {
             path: '/device/addDevice',
             // name: '终端添加',
             component: './device/List/steps/Add',
             Routes: ['src/pages/Authorized'],
-            authority: [ 'admin','user'],
+            authority: ['admin', 'user'],
           },
           {
             path: '/device/sensorlist',
             name: '传感器管理',
             component: './device/List/SensorList',
             Routes: ['src/pages/Authorized'],
-            authority: [ 'admin','user'],
+            authority: ['admin', 'user'],
           },
           {
             path: '/device/addSensor',
             // name: '传感器添加',
             component: './device/List/steps/SensorAdd',
             Routes: ['src/pages/Authorized'],
-            authority: [ 'admin','user'],
+            authority: ['admin', 'user'],
           },
           {
             path: '/device/bindDevice',
             name: '设备绑定',
             component: './device/bind/bindList',
             Routes: ['src/pages/Authorized'],
-            authority: [ 'admin','user'],
+            authority: ['admin', 'user'],
           },
           {
             path: '/device/addDeviceConfig',
             // name: '传感器添加',
             component: './device/bind/steps/Add',
             Routes: ['src/pages/Authorized'],
-            authority: [ 'admin','user'],
+            authority: ['admin', 'user'],
           },
         ],
       },
+      {
+        name: '系统管理',
+        icon: 'sliders',
+        path: '/system',
+        routes: [
+          // result
+          {
+            path: '/system/taskList',
+            name: '任务管理',
+            component: './system/task/TaskList',
+            Routes: ['src/pages/Authorized'],
+            authority: ['admin', 'user'],
+          },
+          {
+            path: '/system/addList',
+            // name: '任务管理',
+            component: './system/task/steps/Add',
+            Routes: ['src/pages/Authorized'],
+            authority: ['admin', 'user'],
+          },
+        ],
+      },
+      
     ],
   },
 ];
