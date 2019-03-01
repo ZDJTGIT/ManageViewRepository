@@ -1,5 +1,6 @@
 import { stringify } from 'qs';
 import request from '../utils/request';
+import '../routes/Config';
 
 export async function queryProjectNotice() {
   return request('/api/project/notice');
@@ -61,7 +62,7 @@ export async function queryFakeList(params) {
 }
 
 export async function fakeAccountLogin(params) {
-  return request('http://123.207.88.210:8090/user/login', {
+  return request(`http://${global.constants.onlineWeb}/user/login`, {
     method: 'POST',
     body: params,
   });
